@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "Tea")
@@ -15,6 +16,8 @@ public class Tea {
     @Getter @Setter private String name;
     @Getter @Setter private String typeOfTea;
     @Getter @Setter private String countryOfOrigin;
+    @ManyToMany(mappedBy = "favouriteTeas")
+    @Getter @Setter private List<Customer> customers;
 
     protected Tea() {}
 

@@ -15,7 +15,11 @@ public class Customer {
     @Getter private Long id;
     @Getter @Setter private String firstName;
     @Getter @Setter private String lastName;
-    //@Getter @Setter private List<Tea> teas;  //oblubeny caj alebo caje
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "favourite_tea",
+            joinColumns = @JoinColumn(name = "tea_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "customer_id", referencedColumnName = "id"))
+    @Getter @Setter private List<Tea> favouriteTeas;  //oblubeny caj alebo caje
 
     protected Customer() {}
 

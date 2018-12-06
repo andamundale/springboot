@@ -38,7 +38,7 @@ public class MysqlJdbcDriverApplication {//} implements CommandLineRunner {
 	}
 
     @Bean
-    public CommandLineRunner demo(CustomerRepository customerRepository, TeaRepository teaRepository) throws Exception {
+    public CommandLineRunner demo(CustomerRepository customerRepository, TeaRepository teaRepository) {
     //public void demo(CustomerRepository repository) throws Exception {
         return (args) -> {
             // save a couple of customers
@@ -58,7 +58,7 @@ public class MysqlJdbcDriverApplication {//} implements CommandLineRunner {
             log.info("-------------------------------");
             for (Customer customer : customerRepository.findAll()) {
                 log.info(customer.toString());
-                System.out.println("Here is a tea: " + customer.toString());
+                System.out.println("Here is a customer: " + customer.toString());
             }
             log.info("");
 
@@ -67,7 +67,7 @@ public class MysqlJdbcDriverApplication {//} implements CommandLineRunner {
             log.info("-------------------------------");
             for (Tea tea : teaRepository.findAll()) {
                 log.info(tea.toString());
-                System.out.println("Here is a customer: " + tea.toString());
+                System.out.println("Here is a tea: " + tea.toString());
             }
             log.info("");
 
