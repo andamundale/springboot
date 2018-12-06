@@ -21,6 +21,9 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
+import com.michaelcgood.dao.SystemRepository;
+import com.michaelcgood.model.SystemExample;
+
 @SpringBootApplication
 @EnableJpaRepositories("com.michaelcgood.dao")
 public class MysqlJdbcDriverApplication {//} implements CommandLineRunner {
@@ -29,13 +32,49 @@ public class MysqlJdbcDriverApplication {//} implements CommandLineRunner {
 	DataSource dataSource;
 
 	@Autowired
+	SystemRepository systemRepository;
+
+	@Autowired
     CustomerRepository customerRepository;
 
+	//private static final Logger log = LoggerFactory.getLogger(Application.class);
     private static final Logger log = LoggerFactory.getLogger(MysqlJdbcDriverApplication.class);
 
 	public static void main(String[] args) {
+        //SpringApplication.run(MysqlJdbcDriverApplication.class, args);
         SpringApplication.run(MysqlJdbcDriverApplication.class);
 	}
+
+	//
+	//@Override
+	//public void run(String... args) throws Exception {
+	    /*
+		// add windows server
+		SystemExample systemExampleWindows = new SystemExample();
+		systemExampleWindows.setName("Windows Server 2012 R2");
+		systemExampleWindows.setLastaudit("2017-08-11");
+		systemRepository.save(systemExampleWindows);
+		// add rhel
+		SystemExample systemExampleRhel = new SystemExample();
+		systemExampleRhel.setName("RHEL 7");
+		systemExampleRhel.setLastaudit("2017-07-21");
+		systemRepository.save(systemExampleRhel);
+		// add solaris
+		SystemExample systemExampleSolaris = new SystemExample();
+		systemExampleSolaris.setName("Solaris 11");
+		systemExampleSolaris.setLastaudit("2017-08-13");
+		systemRepository.save(systemExampleSolaris);
+		*/
+	    /*
+		Iterable<SystemExample> systemlist = systemRepository.findAll();
+		System.out.println("here are system count: " + systemlist.toString());
+		for(SystemExample systemExample:systemlist){
+			System.out.println("Here is a system: " + systemExample.toString());
+		}
+		*/
+	//    demo(customerRepository);
+	//}
+	//
 
     @Bean
     public CommandLineRunner demo(CustomerRepository customerRepository, TeaRepository teaRepository) throws Exception {
@@ -58,19 +97,31 @@ public class MysqlJdbcDriverApplication {//} implements CommandLineRunner {
             log.info("-------------------------------");
             for (Customer customer : customerRepository.findAll()) {
                 log.info(customer.toString());
-                System.out.println("Here is a tea: " + customer.toString());
+                System.out.println("Here is a customer: "+customer.toString());
             }
             log.info("");
 
-            // fetch all teas
-            log.info("Teas found with findAll():");
-            log.info("-------------------------------");
-            for (Tea tea : teaRepository.findAll()) {
-                log.info(tea.toString());
-                System.out.println("Here is a customer: " + tea.toString());
-            }
-            log.info("");
+            /*
+            // fetch an individual customer by ID
+            repository.findById(1L)
+                    .ifPresent(customer -> {
+                        log.info("Customer found with findById(1L):");
+                        log.info("--------------------------------");
+                        log.info(customer.toString());
+                        log.info("");
+                    });
 
+            // fetch customers by last name
+            log.info("Customer found with findByLastName('Bauer'):");
+            log.info("--------------------------------------------");
+            repository.findByLastName("Bauer").forEach(bauer -> {
+                log.info(bauer.toString());
+            });
+            // for (Customer bauer : repository.findByLastName("Bauer")) {
+            // 	log.info(bauer.toString());
+            // }
+            log.info("");
+            */
         };
     }
 
