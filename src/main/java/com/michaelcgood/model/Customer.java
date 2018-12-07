@@ -10,6 +10,8 @@ import java.util.List;
 @Table(name = "Customer")
 public class Customer {
 
+//    TODO A: code looks messy, check style below or move @Getter @Setter to classlevel
+
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     @Getter private Long id;
@@ -21,6 +23,7 @@ public class Customer {
             inverseJoinColumns = @JoinColumn(name = "customer_id", referencedColumnName = "id"))
     @Getter @Setter private List<Tea> favouriteTeas;  //oblubeny caj alebo caje
 
+//    TODO not necessary constructor - check lombock @NoArgsConstructor
     protected Customer() {}
 
     public Customer(String firstName, String lastName) {

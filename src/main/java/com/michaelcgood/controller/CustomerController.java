@@ -24,6 +24,10 @@ public class CustomerController {
         this.teaRepository = teaRepository;
     }
 
+    //TODO rework with @GetMapping, @PostMapping,....
+    //TODO adding should be POST method only
+    //TODO path /addCustomer is not necessary
+    // return values should be the added object (always)
     @RequestMapping(value = "/addCustomer", method = { RequestMethod.GET, RequestMethod.POST })
     public void addCustomer(Customer customer) {
         customerRepository.save(customer);
@@ -34,6 +38,9 @@ public class CustomerController {
         return customerRepository.findByLastName(lastName);
     }
 
+//    TODO All logic from controller should be moved into Services (like CustomerServices)
+    // it is better for JUnit testing
+    //TODO delete should be with DELETE method only
     @RequestMapping(value = "/deleteCustomerById", method = { RequestMethod.GET, RequestMethod.POST })
     public boolean deleteCustomerById(Long id) {
         boolean result = false;
@@ -45,6 +52,7 @@ public class CustomerController {
         return result;
     }
 
+    //TODO update is with PUT method
     @RequestMapping(value = "/updateCustomerById", method = { RequestMethod.GET, RequestMethod.POST })
     public boolean updateCustomersById(Customer customer) {
         boolean result = false;
