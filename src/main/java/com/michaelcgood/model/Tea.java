@@ -1,25 +1,29 @@
 package com.michaelcgood.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Table(name = "Tea")
+@NoArgsConstructor
+@Data
 public class Tea {
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
-    @Getter private Long id;
-    @Getter @Setter private String name;
-    @Getter @Setter private String typeOfTea;
-    @Getter @Setter private String countryOfOrigin;
-    @ManyToMany(mappedBy = "favouriteTeas")
-    @Getter @Setter private List<Customer> customers;
+    private Long id;
 
-    protected Tea() {}
+    private String name;
+    private String typeOfTea;
+    private String countryOfOrigin;
+
+    @ManyToMany(mappedBy = "favouriteTeas")
+    @Getter @Setter private List<Customer> customers; // zoznam zakaznikov oblubijucich tento caj
+
+//    TODO not necessary constructor - check lombock @NoArgsConstructor
+//    protected Tea() {}
 
     public Tea(String name, String typeOfTea, String countryOfOrigin) {
         this.name = name;
@@ -33,5 +37,4 @@ public class Tea {
                 "Tea[id=%d, name='%s', typeOfTea='%s', countryOfOrigin='%s']",
                 id, name, typeOfTea, countryOfOrigin);
     }
-
 }

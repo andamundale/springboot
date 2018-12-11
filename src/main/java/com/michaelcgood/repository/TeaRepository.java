@@ -1,4 +1,4 @@
-package com.michaelcgood.dao;
+package com.michaelcgood.repository;
 
 import com.michaelcgood.model.Tea;
 import org.springframework.data.repository.CrudRepository;

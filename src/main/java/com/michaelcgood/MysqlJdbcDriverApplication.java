@@ -1,35 +1,21 @@
 package com.michaelcgood;
 
-import java.sql.Date;
-import java.util.List;
-
-import javax.sql.DataSource;
-
-import com.michaelcgood.dao.CustomerRepository;
-import com.michaelcgood.dao.TeaRepository;
+import com.michaelcgood.repository.CustomerRepository;
+import com.michaelcgood.repository.TeaRepository;
 import com.michaelcgood.model.Customer;
 //import javafx.application.Application;
 import com.michaelcgood.model.Tea;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
-@EnableJpaRepositories("com.michaelcgood.dao")
-public class MysqlJdbcDriverApplication {//} implements CommandLineRunner {
-
-	@Autowired
-	DataSource dataSource;
-
-	@Autowired
-    CustomerRepository customerRepository;
+@EnableJpaRepositories("com.michaelcgood.repository")
+public class MysqlJdbcDriverApplication {
 
     private static final Logger log = LoggerFactory.getLogger(MysqlJdbcDriverApplication.class);
 
@@ -41,7 +27,7 @@ public class MysqlJdbcDriverApplication {//} implements CommandLineRunner {
     public CommandLineRunner demo(CustomerRepository customerRepository, TeaRepository teaRepository) {
     //public void demo(CustomerRepository repository) throws Exception {
         return (args) -> {
-            // save a couple of customers
+            // save a couple of customers and teas
             System.out.println("Preloading database.");
             customerRepository.save(new Customer("Jack", "Bauer"));
             customerRepository.save(new Customer("Chloe", "O'Brian"));
@@ -70,9 +56,6 @@ public class MysqlJdbcDriverApplication {//} implements CommandLineRunner {
                 System.out.println("Here is a tea: " + tea.toString());
             }
             log.info("");
-
         };
     }
-
-
 }

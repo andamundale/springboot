@@ -1,71 +1,72 @@
 package com.michaelcgood.controller;
 
-import com.michaelcgood.dao.CustomerRepository;
-import com.michaelcgood.dao.TeaRepository;
-import com.michaelcgood.model.Customer;
 import com.michaelcgood.model.Tea;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import com.michaelcgood.service.TeaService;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 public class TeaController {
 
-    private TeaRepository teaRepository;
-    private CustomerRepository customerRepository;
+    private TeaService teaService;
 
-    TeaController(CustomerRepository customerRepository, TeaRepository repository) {
-        this.customerRepository = customerRepository;
-        this.teaRepository = repository;
+    TeaController(TeaService teaService) {
+        this.teaService = teaService;
     }
 
-    @RequestMapping(value = "/addTea", method = { RequestMethod.GET, RequestMethod.POST })
-    public void addTea(Tea tea) {
-        teaRepository.save(tea);
+    @PostMapping(value = "/addTea")
+    public Tea addTea(Tea tea) {
+        return teaService.addTea(tea);
     }
 
-    @RequestMapping(value = "/getTeaByName", method = { RequestMethod.GET, RequestMethod.POST })
+    @GetMapping(value = "/getTeaByName")
     public List<Tea> getTeaByName(String name) {
-        return teaRepository.findByName(name);
-    }
-
-    @RequestMapping(value = "/deleteTeaById", method = { RequestMethod.GET, RequestMethod.POST })
-    public boolean deleteTeaById(Long id) {
-        boolean result = false;
-        if (teaRepository.existsById(id)) {
-            result = true;
-            teaRepository.deleteById(id);
+        if (name != "") {
+            return teaService.getTeaByName(name);
+        } else {
+            return new ArrayList<Tea>();
         }
-
-        return result;
     }
 
-    @RequestMapping(value = "/updateTeaById", method = { RequestMethod.GET, RequestMethod.POST })
-    public boolean updateTeasById(Tea tea) {
-        boolean result = false;
-        if (teaRepository.existsById(tea.getId())) {
-            teaRepository.save(tea);
-            result = true;
+    @DeleteMapping(value = "/deleteTeaById")
+    public Tea deleteTeaById(Long id) {
+        // nejaka pekna podmienka ze vstup je validny
+        if (id >= 0) {
+            return teaService.deleteTeaById(id);
+        } else {
+            return null;
         }
-
-        return result;
     }
 
-    @RequestMapping(value = "/getTeasCustomersByTeaId", method = { RequestMethod.GET, RequestMethod.POST })
+    @PutMapping(value = "/updateTea")
+    public Tea updateTea(Tea tea) {
+        // nejaka pekna podmienka ze vstup je validny
+        if (tea != null) {
+            return teaService.updateTea(tea);
+        } else {
+            return null;
+        }
+    }
+
+    @GetMapping(value = "/getTeasCustomersByTeaId")
     public List<String> getTeasCustomersByTeaId(Long id) {
-        List<String> result = new ArrayList<>();
-        Optional<Tea> tea = teaRepository.findById(id);
-
-        if (tea.isPresent()) {
-            for (Customer customer : tea.get().getCustomers()) {
-                result.add(customer.toString());
-            }
+        // nejaka pekna podmienka ze vstup je validny
+        if (id >= 0) {
+            return teaService.getTeasCustomersByTeaId(id);
+        } else {
+            return new ArrayList<String>();
         }
-
-        return result;
     }
+
+    @GetMapping(
+            value = "/getAllTeas",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public List<String> getAllTeas() {
+        return teaService.getAllTeas();
+    };
+
 }

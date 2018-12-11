@@ -1,4 +1,4 @@
-package com.michaelcgood.dao;
+package com.michaelcgood.repository;
 
 import java.util.List;
 

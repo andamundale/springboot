@@ -1,130 +1,83 @@
 package com.michaelcgood.controller;
 
-import com.michaelcgood.dao.CustomerRepository;
-import com.michaelcgood.dao.TeaRepository;
 import com.michaelcgood.model.Customer;
 import com.michaelcgood.model.Tea;
-import org.springframework.expression.ParseException;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import com.michaelcgood.service.CustomerService;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 public class CustomerController {
 
-    private CustomerRepository customerRepository;
-    private TeaRepository teaRepository;
+    private CustomerService customerService;
 
-    CustomerController(CustomerRepository repository, TeaRepository teaRepository) {
-        this.customerRepository = repository;
-        this.teaRepository = teaRepository;
+    CustomerController(CustomerService customerService) {
+        this.customerService = customerService;
     }
 
     //TODO rework with @GetMapping, @PostMapping,....
     //TODO adding should be POST method only
     //TODO path /addCustomer is not necessary
+        // swagger seems to not work with /addCustomer removed
     // return values should be the added object (always)
-    @RequestMapping(value = "/addCustomer", method = { RequestMethod.GET, RequestMethod.POST })
-    public void addCustomer(Customer customer) {
-        customerRepository.save(customer);
+    @PostMapping(value = "/addCustomer")
+    public Customer addCustomer(Customer customer) {
+        return customerService.addCustomer(customer);
     }
 
-    @RequestMapping(value = "/getCustomersByLastName", method = { RequestMethod.GET, RequestMethod.POST })
+    @GetMapping(value = "/getCustomersByLastName")
     public List<Customer> getCustomersByLastName(String lastName) {
-        return customerRepository.findByLastName(lastName);
+        return customerService.getCustomersByLastName(lastName);
     }
 
-//    TODO All logic from controller should be moved into Services (like CustomerServices)
-    // it is better for JUnit testing
-    //TODO delete should be with DELETE method only
-    @RequestMapping(value = "/deleteCustomerById", method = { RequestMethod.GET, RequestMethod.POST })
-    public boolean deleteCustomerById(Long id) {
-        boolean result = false;
-        if (customerRepository.existsById(id)) {
-            result = true;
-            customerRepository.deleteById(id);
-        }
-
-        return result;
+    // TODO All logic from controller should be moved into Services (like CustomerServices)
+    //  it is better for JUnit testing
+    // TODO delete should be with DELETE method only
+    @DeleteMapping(value = "/deleteCustomerById")
+    public Customer deleteCustomerById(Long id) {
+       if (id >= 0) { //myslim ze id je nezaporne
+           return customerService.deleteCustomerById(id);
+       } else {
+           return null; //zase raz ak neexistuje customer ktoreho chcem vymazat je to neuspech?
+       }
     }
 
     //TODO update is with PUT method
-    @RequestMapping(value = "/updateCustomerById", method = { RequestMethod.GET, RequestMethod.POST })
-    public boolean updateCustomersById(Customer customer) {
-        boolean result = false;
-        if (customerRepository.existsById(customer.getId())) {
-            customerRepository.save(customer);
-            result = true;
+    @PutMapping(value = "/updateCustomer")
+    public Customer updateCustomers(Customer customer) {
+        if (customer != null) {
+            return customerService.updateCustomers(customer);
+        } else {
+            return null; // updatnutie so zlym vstupom netreba riesit
         }
-
-        return result;
     }
 
-    @RequestMapping(value = "/addCustomersTeaById", method = { RequestMethod.GET, RequestMethod.POST })
-    public boolean addCustomersTea(Long customerId, Long teaId) {
-        boolean result = false;
-        Optional<Customer> customer;
-        Optional<Tea> tea;
-
-        customer = customerRepository.findById(customerId);
-        tea = teaRepository.findById(teaId);
-        if (
-                customer.isPresent()
-                && tea.isPresent()
-                && (customer.get().getFavouriteTeas().indexOf(tea.get()) < 0)
-        ) {
-            customer.get().getFavouriteTeas().add(tea.get());
-            tea.get().getCustomers().add(customer.get());
-            customerRepository.save(customer.get());
-            teaRepository.save(tea.get());
-            result = true;
-        }
-
-        return result;
+    @PostMapping(value = "/addCustomersTeaById")
+    public Tea addCustomersTea(Long customerId, Long teaId) {
+        // tu by zase mohla byt podmienka ci vstupy su validne ID
+        return customerService.addCustomersTea(customerId, teaId);
     }
 
 
-    @RequestMapping(value = "/deleteCustomersTeaById", method = { RequestMethod.GET, RequestMethod.POST })
-    public boolean addCustomer(Long customerId, Long teaId) {
-        boolean result = false;
-        Optional<Customer> customer;
-        Optional<Tea> tea;
-
-        customer = customerRepository.findById(customerId);
-        tea = teaRepository.findById(teaId);
-        if (
-                customer.isPresent()
-                && tea.isPresent()
-                && customer.get().getFavouriteTeas().contains(tea.get())
-        ) {
-            customer.get().getFavouriteTeas().remove(tea.get());
-            tea.get().getCustomers().remove(customer.get());
-            customerRepository.save(customer.get());
-            teaRepository.save(tea.get());
-            result = true;
-        }
-
-        return result;
+    @DeleteMapping(value = "/deleteCustomersTeaById")
+    public Tea deleteCustomersTeaById(Long customerId, Long teaId) {
+        // tu by zase mohla byt podmienka ci vstupy su validne ID
+        return customerService.deleteCustomersTeaById(customerId, teaId);
     }
 
-    @RequestMapping(
-            value = "/getCustomersFavouriteTeasByCustomerId",
-            method = { RequestMethod.GET, RequestMethod.POST }
-            )
+    @GetMapping(value = "/getCustomersFavouriteTeasByCustomerId")
     public List<String> getCustomersFavouriteTeasByCustomerId(Long id) {
-        List<String> result = new ArrayList<>();
-        Optional<Customer> customer = customerRepository.findById(id);
-
-        if (customer.isPresent()) {
-            for (Tea tea: customer.get().getFavouriteTeas()) {
-                result.add(tea.toString());
-            }
-        }
-
-        return result;
+        // tu by zase mohla byt podmienka ci vstupy su validne ID
+        return customerService.getCustomersFavouriteTeasByCustomerId(id);
     }
+
+    @GetMapping(
+            value = "/getAllCustomers",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public List<String> getAllCustomers() {
+        return customerService.getAllCustomers();
+    };
 }

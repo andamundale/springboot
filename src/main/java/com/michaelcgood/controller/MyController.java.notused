@@ -1,0 +1,30 @@
+package com.michaelcgood.controller;
+
+import com.michaelcgood.repository.CustomerRepository;
+import com.michaelcgood.repository.TeaRepository;
+import com.michaelcgood.model.Customer;
+//import org.springframework.stereotype.Controller;
+import com.michaelcgood.model.Tea;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
+
+import java.util.*;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
+@RestController
+public class MyController {
+
+    private CustomerRepository customerRepository;
+    private TeaRepository teaRepository;
+
+    MyController(CustomerRepository customerRepository, TeaRepository teaRepository) {
+        this.customerRepository = customerRepository;
+        this.teaRepository = teaRepository;
+    }
+
+
+}
