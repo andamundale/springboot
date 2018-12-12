@@ -17,6 +17,27 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableJpaRepositories("com.michaelcgood.repository")
 public class MysqlJdbcDriverApplication {
 
+// TODO    vycistit JSON - DTO (preferovane) / json ignore
+// TODO    put/delete/post na tej istej ceste
+// TODO    get na tej istej ceste pripadne s id .../v/{id}
+// TODO
+// TODO    testy unit a integracne
+// TODO
+// TODO    navratove hodnoty pri chybach neskor
+
+// TODO    //priklad integracneho testu
+// TODO
+// TODO    public void postAndGetRssForUser() throws Exception {
+// TODO        prepareRequest();
+// TODO
+// TODO        mockMvc.perform(MockMvcRequestBuilders.get("/channels/v1").param("locale", CHANNEL_LOCALE).header("userAuthInfo", "user1"))
+// TODO                .andExpect(MockMvcResultMatchers.status().isOk())
+// TODO                .andExpect(MockMvcResultMatchers.jsonPath("$[0].title", Matchers.equalTo("mytitle")))
+// TODO                .andExpect(MockMvcResultMatchers.jsonPath("$[0].logoUrl", Matchers.equalTo("http://mylogo.com")))
+// TODO                .andReturn();
+// TODO    }
+// TODO
+    
     private static final Logger log = LoggerFactory.getLogger(MysqlJdbcDriverApplication.class);
 
 	public static void main(String[] args) {

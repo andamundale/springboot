@@ -11,8 +11,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "Customer")
-@NoArgsConstructor
 @Data
+@NoArgsConstructor
 public class Customer {
 
 //    TODO A: code looks messy, check style below or move @Getter @Setter to classlevel
@@ -31,8 +31,9 @@ public class Customer {
     private List<Tea> favouriteTeas;  // zakaznikove oblubene caje
 
 //    TODO not necessary constructor - check lombock @NoArgsConstructor
+////      it seems that mapper wants empty constructor before lombok generates one
 //    protected Customer() {}
-//    pri neskorsom commite ale pre svoje edukacne ucely to chcem raz zachovat ako komentar aj s poznamkou nadtym
+
 
     public Customer(String firstName, String lastName) {
         this.firstName = firstName;

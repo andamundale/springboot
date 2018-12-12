@@ -1,0 +1,31 @@
+package com.michaelcgood.service;
+
+import com.michaelcgood.model.Customer;
+import com.michaelcgood.model.Tea;
+import com.michaelcgood.model.dto.CustomerDto;
+import com.michaelcgood.model.dto.TeaDto;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.expression.ParseException;
+
+public class MyController {
+
+    @Autowired
+    private ModelMapper modelMapper;
+
+    protected CustomerDto convertToDto(Customer customer) {
+        return modelMapper.map(customer, CustomerDto.class);
+    }
+
+    protected Customer convertToEntity(CustomerDto customerDTO) throws ParseException {
+        return modelMapper.map(customerDTO, Customer.class);
+    }
+
+    protected TeaDto convertToDto(Tea tea) {
+        return modelMapper.map(tea, TeaDto.class);
+    }
+
+    protected Tea convertToEntity(TeaDto teaDTO) throws ParseException {
+        return modelMapper.map(teaDTO, Tea.class);
+    }
+}

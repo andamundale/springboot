@@ -7,8 +7,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "Tea")
-@NoArgsConstructor
 @Data
+@NoArgsConstructor
 public class Tea {
 
     @Id
@@ -20,9 +20,10 @@ public class Tea {
     private String countryOfOrigin;
 
     @ManyToMany(mappedBy = "favouriteTeas")
-    @Getter @Setter private List<Customer> customers; // zoznam zakaznikov oblubijucich tento caj
+    private List<Customer> customers; // zoznam zakaznikov oblubijucich tento caj
 
 //    TODO not necessary constructor - check lombock @NoArgsConstructor
+////      it seems that mapper wants empty constructor before lombok generates one
 //    protected Tea() {}
 
     public Tea(String name, String typeOfTea, String countryOfOrigin) {

@@ -21,13 +21,22 @@ public class TeaService {
     }
 
     public Tea addTea(Tea tea) {
-        teaRepository.save(tea);
+        if (!teaRepository.existsById(tea.getId())) {
+            teaRepository.save(tea);
 
-        return tea;
+            return tea;
+        } else {
+            return null; //tea s takym id uz existuje
+        }
     }
 
-    public List<Tea> getTeaByName(String name) {
-        return teaRepository.findByName(name);
+    public Tea getTeaById(Long id) {
+        Optional<Tea> tea = teaRepository.findById(id);
+        if (tea.isPresent()) {
+            return tea.get();
+        } else {
+            return null;
+        }
     }
 
     public Tea deleteTeaById(Long id) {
@@ -40,32 +49,33 @@ public class TeaService {
     }
 
     public Tea updateTea(Tea tea) {
-//      co robit ak povodny elemnt neexistuje? zatial hlupo pridam update ako novy
-        //if (teaRepository.existsById(tea.getId())) {
-        teaRepository.save(tea);
-        //}
+        if (teaRepository.existsById(tea.getId())) {
+            teaRepository.save(tea);
 
-        return tea;
+            return tea;
+        } else {
+            return null; //nemozno updatnut entitu ktora neexistuje
+        }
     }
 
-    public List<String> getTeasCustomersByTeaId(Long id) {
-        List<String> result = new ArrayList<>();
+    public List<Customer> getTeasCustomersByTeaId(Long id) {
+        List<Customer> result = new ArrayList<Customer>();
         Optional<Tea> tea = teaRepository.findById(id);
 
         if (tea.isPresent()) {
             for (Customer customer : tea.get().getCustomers()) {
-                result.add(customer.toString());
+                result.add(customer);
             }
         }
 
         return result;
     }
 
-    public List<String> getAllTeas() {
-        List<String> result = new ArrayList<>();
+    public List<Tea> getAllTeas() {
+        List<Tea> result = new ArrayList<Tea>();
 
         for (Tea tea : teaRepository.findAll()) {
-            result.add(tea.toString());
+            result.add(tea);
         }
 
         return result;

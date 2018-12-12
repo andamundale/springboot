@@ -21,12 +21,22 @@ public class CustomerService {
     }
 
     public Customer addCustomer(Customer customer) {
-        customerRepository.save(customer);
-        return customer;
+        if (!customerRepository.existsById(customer.getId())) {
+            customerRepository.save(customer);
+
+            return customer;
+        } else {
+            return null; //customer s takym id uz existuje
+        }
     }
 
-    public List<Customer> getCustomersByLastName(String lastName) {
-        return customerRepository.findByLastName(lastName);
+    public Customer getCustomerById(Long id) {
+        Optional<Customer> customer = customerRepository.findById(id);
+        if (customer.isPresent()) {
+            return customer.get();
+        } else {
+            return null;
+        }
     }
 
     public Customer deleteCustomerById(Long id) {
@@ -38,13 +48,14 @@ public class CustomerService {
         return customer.get();
     }
 
-    public Customer updateCustomers(Customer customer) {
-//      co robit ak povodny elemnt neexistuje? zatial hlupo pridam update ako novy
-        //if (customerRepository.existsById(customer.getId())) {
-        customerRepository.save(customer);
-        //}
+    public Customer updateCustomer(Customer customer) {
+        if (customerRepository.existsById(customer.getId())) {
+            customerRepository.save(customer);
 
-        return customer;
+            return customer;
+        } else {
+            return null;  //nemozno updatnut entitu ktora neexistuje
+        }
     }
 
     public Tea addCustomersTea(Long customerId, Long teaId) {
@@ -89,13 +100,13 @@ public class CustomerService {
         // ak vec na vymazanie neexistuje alebo objekt ktoremu ma patrit neexistuje je akcia vymazania neuspesna?
     }
 
-    public List<String> getCustomersFavouriteTeasByCustomerId(Long id) {
-        List<String> result = new ArrayList<>();
+    public List<Tea> getCustomersFavouriteTeasByCustomerId(Long id) {
+        List<Tea> result = new ArrayList<>();
         Optional<Customer> customer = customerRepository.findById(id);
 
         if (customer.isPresent()) {
             for (Tea tea: customer.get().getFavouriteTeas()) {
-                result.add(tea.toString());
+                result.add(tea);
             }
         } else {
             return null; //customer neexistuje tak ani zoznam jeho oblubenych cajov
@@ -104,11 +115,11 @@ public class CustomerService {
         return result;
     }
 
-    public List<String> getAllCustomers() {
-        List<String> result = new ArrayList<>();
+    public List<Customer> getAllCustomers() {
+        List<Customer> result = new ArrayList<>();
 
         for (Customer customer : customerRepository.findAll()) {
-            result.add(customer.toString());
+            result.add(customer);
         }
 
         return result;
