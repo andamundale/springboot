@@ -15,18 +15,21 @@ public class CustomerService {
     private CustomerRepository customerRepository;
     private TeaRepository teaRepository;
 
-    CustomerService(CustomerRepository repository, TeaRepository teaRepository) {
+    public CustomerService(CustomerRepository repository, TeaRepository teaRepository) {
         this.customerRepository = repository;
         this.teaRepository = teaRepository;
     }
 
     public Customer addCustomer(Customer customer) {
-        if (!customerRepository.existsById(customer.getId())) {
-            customerRepository.save(customer);
-
-            return customer;
-        } else {
+        if (
+//            customerRepository.findByLastName(customer.getLastName()) != null
+//            && customerRepository.findByFirstName(customer.getFirstName()) != null
+            customerRepository.existsById(customer.getId())
+        ) {
             return null; //customer s takym id uz existuje
+        } else {
+            customerRepository.save(customer);
+            return customer;
         }
     }
 

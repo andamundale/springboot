@@ -1,4 +1,4 @@
-package com.michaelcgood.app;
+package com.michaelcgood.app.mapper;
 
 import com.michaelcgood.mapper.CustomerMapper;
 import com.michaelcgood.mapper.TeaMapper;

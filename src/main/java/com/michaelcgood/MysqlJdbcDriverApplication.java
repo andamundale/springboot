@@ -13,6 +13,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @SpringBootApplication
 @EnableJpaRepositories("com.michaelcgood.repository")
 public class MysqlJdbcDriverApplication {
@@ -59,6 +62,11 @@ public class MysqlJdbcDriverApplication {
             teaRepository.save(new Tea("Bancha", "green tea", "Japan"));
             teaRepository.save(new Tea("Baihao Yinzhen", "white tea", "China"));
             teaRepository.save(new Tea("Keemun", "black tea", "China"));
+            Customer customer0 = new Customer("Charles", "the 4th");
+            List<Tea> teas = new ArrayList<Tea>();
+            teas.add(new Tea("Baihao Yinzhen", "white tea", "China"));
+            customer0.setFavouriteTeas(teas);
+            customerRepository.save(customer0);
 
             // fetch all customers
             log.info("Customers found with findAll():");

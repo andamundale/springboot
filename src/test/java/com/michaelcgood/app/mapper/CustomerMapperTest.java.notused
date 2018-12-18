@@ -1,0 +1,50 @@
+package com.michaelcgood.app.mapper;
+
+import com.michaelcgood.mapper.CustomerMapper;
+import com.michaelcgood.model.Customer;
+import com.michaelcgood.model.Tea;
+import com.michaelcgood.model.dto.CustomerDto;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.platform.suite.api.IncludeEngines;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.util.Assert;
+
+//import static org.assertj.core.api.Assertions.assertThat;
+import static jdk.internal.dynalink.support.Guards.isNotNull;
+import static junit.framework.Assert.assertEquals;
+import static org.assertj.core.api.AssertionsForClassTypes.not;
+import static org.assertj.core.internal.bytebuddy.implementation.FixedValue.nullValue;
+import static org.assertj.core.internal.bytebuddy.matcher.ElementMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+
+import java.util.ArrayList;
+
+//@ExtendWith(MockitoExtension.class)
+//@RunWith(JUnitPlatform.class)
+//@IncludeEngines("junit-jupiter")
+public class CustomerMapperTest {
+
+    @Test
+    public void shouldMapCustomerToDto() {
+        //given
+        Customer customer = new Customer( "Alexander", "Velky" );
+
+        //when
+        CustomerDto customerDto = CustomerMapper.INSTANCE.customerToCustomerDto( customer );
+
+        //then
+        assertNotNull(customerDto);
+        //assertThat(customerDto, is(notNullValue()));
+        //assertThat( customerDto, isNotNull());
+        assertThat( customerDto.getFirstName(), equals( "Alexander" ));
+        assertThat( customerDto.getLastName(), equals( "Velky" ));
+    }
+}

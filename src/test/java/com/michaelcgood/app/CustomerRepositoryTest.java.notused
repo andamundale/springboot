@@ -1,0 +1,73 @@
+package com.michaelcgood.app;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertTrue;
+
+import com.michaelcgood.model.Customer;
+import com.michaelcgood.repository.CustomerRepository;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEntityManager;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
+
+import javax.persistence.EntityManager;
+import java.util.List;
+import java.util.Optional;
+
+//@ComponentScan
+//@ExtendWith(MockitoExtension.class)
+//@RunWith(SpringRunner.class)
+//@AutoConfigureTestEntityManager
+//@DataJpaTest
+//@WebAppConfiguration
+@SpringBootTest
+public class CustomerRepositoryTest {
+
+    @Autowired
+    private TestEntityManager entityManager;
+    //private EntityManager entityManager;
+
+    @Autowired
+    private CustomerRepository customerRepository;
+
+    @Test
+    public void whenFindByLastName_thenShouldReturnCustomer() {
+        //given
+        Customer alexander = new Customer("Alexander", "Velky");
+        entityManager.persist(alexander);
+        entityManager.flush();
+
+        //when
+        List<Customer> found = customerRepository.findByLastName(alexander.getLastName());
+
+        //then
+        assertThat(found.get(0).getLastName()).isEqualTo(alexander.getLastName());
+    }
+
+    @Test
+    public void whenFindByFirstName_thenShouldReturnCustomer() {
+        //given
+        Customer alexander = new Customer("Alexander", "Velky");
+        alexander.setId(new Long(128));
+        entityManager.persist(alexander);
+        entityManager.flush();
+
+        //when
+        Optional<Customer> found = customerRepository.findById(alexander.getId());
+
+        //then
+        assertTrue(found.isPresent());
+        assertThat(found.get().getId()).isEqualTo(alexander.getId());
+    }
+
+    // TODO este otestovat save update a delete
+}
