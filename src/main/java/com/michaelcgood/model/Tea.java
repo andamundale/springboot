@@ -3,6 +3,7 @@ package com.michaelcgood.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -30,6 +31,7 @@ public class Tea {
         this.name = name;
         this.typeOfTea = typeOfTea;
         this.countryOfOrigin = countryOfOrigin;
+        this.customers = new ArrayList<Customer>();
     }
 
     @Override

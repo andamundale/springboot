@@ -104,18 +104,17 @@ public class CustomerService {
     }
 
     public List<Tea> getCustomersFavouriteTeasByCustomerId(Long id) {
-        List<Tea> result = new ArrayList<>();
+        //List<Tea> result = new ArrayList<>();
         Optional<Customer> customer = customerRepository.findById(id);
 
         if (customer.isPresent()) {
-            for (Tea tea: customer.get().getFavouriteTeas()) {
-                result.add(tea);
-            }
+            //for (Tea tea: customer.get().getFavouriteTeas()) {
+            //    result.add(tea);
+            //}
+            return customer.get().getFavouriteTeas();
         } else {
             return null; //customer neexistuje tak ani zoznam jeho oblubenych cajov
         }
-
-        return result;
     }
 
     public List<Customer> getAllCustomers() {

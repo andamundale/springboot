@@ -25,6 +25,7 @@ import java.util.Optional;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 //import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 //import static org.mockito.ArgumentMatchers.isNull;
@@ -43,18 +44,39 @@ public class CustomerServiceTest {
     private CustomerService customerService;
 
     private List<Customer> customers;
-    private Long id0, id1;
+    private List<Tea> teas;
+    private Long id0, id1, id2;
+    private Tea tea2;
 /**/
     @Before
     //@BeforeEach
     public void setup() {
-        id0 = new Long(12);
-        Customer customer0 = new Customer("Alexander", "Velky");
-        customer0.setId(id0);
-        id1 = new Long(13);
-        Customer customer1 = new Customer("Charles", "the 4th");
-        customer1.setId(id1);
+        teas = new ArrayList<Tea>();
         customers = new ArrayList<Customer>();
+        List<Customer> teaCustomers = new ArrayList<Customer>();
+        Tea tea0, tea1;
+        Customer customer0, customer1;
+
+        id0 = new Long(12);
+        id1 = new Long(13);
+        id2 = new Long(14);
+        tea0 = new Tea("Bancha", "green tea", "Japan");
+        tea0.setId(id0);
+        tea1 = new Tea("Pai Mu Tan", "white tea", "China");
+        tea1.setId(id1);
+        tea2 = new Tea("Sencha", "green tea", "Japan");
+        tea2.setId(id2);
+        teas.add(tea0);
+        teas.add(tea1); //id2 pridame neskor
+        customer0 = new Customer("Alexander", "Velky");
+        customer0.setId(id0);
+        customer0.setFavouriteTeas(teas);
+        teaCustomers.add(customer0);
+        teas.get(0).setCustomers(teaCustomers);
+        teas.get(1).setCustomers(teaCustomers);
+        customer1 = new Customer("Charles", "the 4th");
+        customer1.setId(id1);
+        //customer1.setFavouriteTeas(teas);
         customers.add(customer0);
         customers.add(customer1);
     }
@@ -62,41 +84,24 @@ public class CustomerServiceTest {
 //    public Customer addCustomer(Customer customer)
     @Test
     public void testAddCustomer() {
-        /*
-        Long id = new Long(57);
-        Customer customer = new Customer("Alexander", "Velky");
-        customer.setId(id);
-        */
-        System.out.println(customers.get(0).toString());
         Customer result = customerService.addCustomer(customers.get(0));
-
-        //ArgumentCaptor<Customer> customerArgument = ArgumentCaptor.forClass(Customer.class);
-        //verify(customerRepositoryMock, times(1)).save(customerArgument.capture());
-        //verify(customerRepositoryMock, times(1)).save(customers.get(0));
-        //verifyNoMoreInteractions(customerRepositoryMock);
-        //Customer model = customerArgument.getValue();
 
         assertThat(result.getFirstName(), is("Alexander"));
         assertThat(result.getLastName(),is("Velky"));
-        assertNull(result.getFavouriteTeas());
+//        assertThat(result.getFavouriteTeas(), isNotNull());
+        assertNotNull(result.getFavouriteTeas());
         assertThat(result.getId(), is(id0));
     }
 
 //    public Customer getCustomerById(Long id)
     @Test
     public void testGetCustomerById() {
-        /*
-        Long id = new Long(57);
-        Customer customer = new Customer("Alexander", "Velky");
-        targetResult.setId(id);
-        */
         when(customerRepositoryMock.findById(id0)).thenReturn(Optional.of(customers.get(0)));
 
         Customer customer = customerService.getCustomerById(id0);
         assertThat(customer.getFirstName(), is("Alexander"));
         assertThat(customer.getLastName(),is("Velky"));
-        //assertThat(customer.getFavouriteTeas(), is(new ArrayList<Tea>()));
-        assertNull(customer.getFavouriteTeas());
+        assertNotNull(customer.getFavouriteTeas());
         assertThat(customer.getId(), is(id0));
     }
 
@@ -109,38 +114,76 @@ public class CustomerServiceTest {
 
         verify(customerRepositoryMock, times(1)).findById(id0);
         verify(customerRepositoryMock, times(1)).deleteById(id0);
-        //verifyNoMoreInteractions(customerRepositoryMock);
-
         assertThat(actual, is(customers.get(0)));
     }
 
 //    public Customer updateCustomer(Customer customer)
     @Test
-    public void testUpdateCustomer() {}
+    public void testUpdateCustomer() {
+        //testing successful update that means customer being updated exists
+        when(customerRepositoryMock.existsById(id0)).thenReturn(true);
+        Customer customrUpdate = customers.get(0);
+        customrUpdate.setLastName("Macedonsky");
+        Customer result = customerService.updateCustomer(customers.get(0));
+
+        assertThat(result.getFirstName(), is("Alexander"));
+        assertThat(result.getLastName(),is("Macedonsky"));
+//        assertThat(result.getFavouriteTeas(), isNotNull());
+        assertNotNull(result.getFavouriteTeas());
+        assertThat(result.getId(), is(id0));
+    }
 
 //    public Tea addCustomersTea(Long customerId, Long teaId)
     @Test
-    public void testAddCustomersTea() {}
+    public void testAddCustomersTea() {
+        when(customerRepositoryMock.findById(id0)).thenReturn(Optional.of(customers.get(0)));
+        when(teaRepositoryMock.findById(id2)).thenReturn(Optional.of(tea2));
+        Tea result = customerService.addCustomersTea(id0,  id2);
+
+        assertThat(result.getId(), is(id2));
+        assertThat(result.getName(), is("Sencha"));
+        assertThat(result.getTypeOfTea(), is("green tea"));
+        assertThat(result.getCountryOfOrigin(),is("Japan"));
+        assertThat(result.getCustomers().size(), is(1));
+        assertThat(customers.get(0).getFavouriteTeas().size(), is(3));
+    }
 
 //    public Tea deleteCustomersTeaById(Long customerId, Long teaId)
     @Test
-    public void testDeleteCustomersTeaById() {}
+    public void testDeleteCustomersTeaById() {
+        when(customerRepositoryMock.findById(id0)).thenReturn(Optional.of(customers.get(0)));
+        when(teaRepositoryMock.findById(id0)).thenReturn(Optional.of(teas.get(0)));
+        Tea result = customerService.deleteCustomersTeaById(id0,  id0);
+
+        assertThat(result.getId(), is(id0));
+        assertThat(result.getName(), is("Bancha"));
+        assertThat(result.getTypeOfTea(), is("green tea"));
+        assertThat(result.getCountryOfOrigin(),is("Japan"));
+        assertThat(result.getCustomers().size(), is(0));
+        assertThat(customers.get(0).getFavouriteTeas().size(), is(1));
+//        assertThat(result.getFavouriteTeas(), isNotNull());
+    }
 
 //    public List<Tea> getCustomersFavouriteTeasByCustomerId(Long id)
     @Test
-    public void testGetCustomersFavouriteTeasByCustomerId() {}
+    public void testGetCustomersFavouriteTeasByCustomerId() {
+        when(customerRepositoryMock.findById(id0)).thenReturn(Optional.of(customers.get(0)));
+
+        //Customer customer = customerService.getCustomerById(id0);
+        List<Tea> favTeas = customerService.getCustomersFavouriteTeasByCustomerId(id0);
+
+        assertThat(favTeas.size(), is(2));
+        assertThat(favTeas.get(0).getName(), is("Bancha"));
+        assertThat(favTeas.get(0).getTypeOfTea(),is("green tea"));
+        assertThat(favTeas.get(0).getCountryOfOrigin(),is("Japan"));
+        assertThat(favTeas.get(1).getName(), is("Pai Mu Tan"));
+        assertThat(favTeas.get(1).getTypeOfTea(),is("white tea"));
+        assertThat(favTeas.get(1).getCountryOfOrigin(),is("China"));
+    }
 
 //    public List<Customer> getAllCustomers()
     @Test
     public void testGetAllCustomers() {
-        /*
-        Long id0 = new Long(57);
-        Customer customer0 = new Customer("Alexander", "Velky");
-        customer0.setId(id0);
-        Long id1 = new Long(31);
-        Customer customer1 = new Customer("Charles", "the 4th");
-        customer1.setId(id1);
-        */
         List<Customer> target = new ArrayList<Customer>();
         target.add(customers.get(0));
         target.add(customers.get(1));
@@ -151,13 +194,11 @@ public class CustomerServiceTest {
 
         assertThat(customers.get(0).getFirstName(), is("Alexander"));
         assertThat(customers.get(0).getLastName(),is("Velky"));
-        //assertThat(customers.get(0).getFavouriteTeas(), is(new ArrayList<Tea>()));
-        assertNull(customers.get(0).getFavouriteTeas());
+        assertNotNull(customers.get(0).getFavouriteTeas());
         assertThat(customers.get(0).getId(), is(id0));
 
         assertThat(customers.get(1).getFirstName(), is("Charles"));
         assertThat(customers.get(1).getLastName(),is("the 4th"));
-        //assertThat(customers.get(1).getFavouriteTeas(), is(new ArrayList<Tea>()));
         assertNull(customers.get(1).getFavouriteTeas());
         assertThat(customers.get(1).getId(), is(id1));
     }

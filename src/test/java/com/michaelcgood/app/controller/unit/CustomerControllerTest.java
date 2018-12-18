@@ -108,7 +108,6 @@ public class CustomerControllerTest {
 
     @Test
     public void testGetAllCustomers() throws Exception {
-
         // Mocking service
         when(customerService.getAllCustomers()).thenReturn(customers);
 
@@ -143,26 +142,13 @@ public class CustomerControllerTest {
 
     @Test
     public void testAddCustomer() throws Exception {
-
-        //String title = TestUtil.createStringWithLength(101);
-        //String description = TestUtil.createStringWithLength(501);
-        //CustomerDto customerDto = new CustomerDto();
-        //customerDto.setId(new Long(1));
-        //customerDto.setFirstName("Alexander");
-        //customerDto.setLastName("Velky");
-
         when(customerService.addCustomer(any(Customer.class))).thenReturn(customers.get(0));
 
         mockMvc.perform(post("/customer/v1/")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(inputCustomer))
                 .andExpect(status().isOk())
-                //.andDo(print())
                 .andExpect(content().string(targetOutputCustomer));
-                //.andExpect(jsonPath("id", is(57)))
-                //.andExpect(jsonPath("firstName", is("Alexander")))
-                //.andExpect(jsonPath("lastName", is("Velky")))
-                //.andExpect(jsonPath("favouriteTeas", is("null")));
         verify(customerService, times(1)).addCustomer(any(Customer.class));
     }
 
@@ -178,7 +164,6 @@ public class CustomerControllerTest {
                 .andExpect(jsonPath("firstName", is("Alexander")))
                 .andExpect(jsonPath("lastName", is("Velky")));
         verify(customerService, times(1)).getCustomerById(any(Long.class));
-
     }
 
     @Test
@@ -191,18 +176,7 @@ public class CustomerControllerTest {
                 .andExpect(jsonPath("id", is(57)))
                 .andExpect(jsonPath("firstName", is("Alexander")))
                 .andExpect(jsonPath("lastName", is("Velky")));
-        //verify(customerService, times(1)).getCustomerById(any(Long.class));
     }
-
-    /*
-    @Test
-    public void testDeleteCustomerById_2() throws Exception {
-        CustomerService spy = Mockito.spy(customerService);
-        Mockito.doReturn(customers.get(0)).when(spy).deleteCustomerById(any(Long.class));
-        assertThat(spy.deleteCustomerById(any(Long.class)), isNull());
-        Mockito.verify(spy).deleteCustomerById(any(Long.class));
-    }
-    */
 
     @Test
     public void testUpdateCustomer() throws Exception {
