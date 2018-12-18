@@ -63,9 +63,10 @@ public class TeaService {
         Optional<Tea> tea = teaRepository.findById(id);
 
         if (tea.isPresent()) {
-            for (Customer customer : tea.get().getCustomers()) {
-                result.add(customer);
-            }
+            //for (Customer customer : tea.get().getCustomers()) {
+            //    result.add(customer);
+            //}
+            return tea.get().getCustomers();
         }
 
         return result;
