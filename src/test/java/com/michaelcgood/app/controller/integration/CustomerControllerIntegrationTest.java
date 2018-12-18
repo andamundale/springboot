@@ -5,8 +5,10 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.ExpectedDatabase;
 import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
@@ -34,6 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@FixMethodOrder(MethodSorters.DEFAULT)
 @SpringBootTest
 @RunWith(SpringRunner.class)
 //@RunWith(SpringJUnit4ClassRunner.class)
@@ -67,10 +70,10 @@ public class CustomerControllerIntegrationTest {
                 .andExpect(status().isOk())
                 //.andDo(print())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$", hasSize(7))) //defaultne 6 ale zalezi od poradia testov
-                .andExpect(jsonPath("$[0].id", is(1)))
-                .andExpect(jsonPath("$[0].firstName", is("Jack")))
-                .andExpect(jsonPath("$[0].lastName", is("Bauer")))
+                .andExpect(jsonPath("$", hasSize(6))) //defaultne 6 ale zalezi od poradia testov
+                .andExpect(jsonPath("$[0].id", is(12)))
+                .andExpect(jsonPath("$[0].firstName", is("Alexander")))
+                .andExpect(jsonPath("$[0].lastName", is("Velky")))
                 .andExpect(jsonPath("$[1].id", is(2)))
                 .andExpect(jsonPath("$[1].firstName", is("Chloe")))
                 .andExpect(jsonPath("$[1].lastName", is("O'Brian")));
@@ -115,13 +118,13 @@ public class CustomerControllerIntegrationTest {
 
     @Test
     public void testDeleteCustomerById() throws Exception {
-        mockMvc.perform(delete("/customer/v1/12")
+        mockMvc.perform(delete("/customer/v1/1")
                 .contentType(MediaType.APPLICATION_JSON))
                 //.content("12"))
                 .andExpect(status().isOk())
                 .andDo(print())
-                .andExpect(jsonPath("id", is(12)))
-                .andExpect(jsonPath("firstName", is("Alexander")))
-                .andExpect(jsonPath("lastName", is("Macedonsky")));
+                .andExpect(jsonPath("id", is(1)))
+                .andExpect(jsonPath("firstName", is("Jack")))
+                .andExpect(jsonPath("lastName", is("Bauer")));
     }
 }
