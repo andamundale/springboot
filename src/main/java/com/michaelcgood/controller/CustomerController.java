@@ -31,22 +31,24 @@ public class CustomerController {
         // swagger seems to not work with /addCustomer removed
     // return values should be the added object (always)
     @PostMapping
-    public Customer addCustomer(@RequestBody CustomerDto customerDTO) {
-        return customerService.addCustomer(CustomerMapper.INSTANCE.customerDtoToCustomer(customerDTO));
+    public CustomerDto addCustomer(@RequestBody CustomerDto customerDTO) {
+        return CustomerMapper.INSTANCE.customerToCustomerDto(
+                customerService.addCustomer(CustomerMapper.INSTANCE.customerDtoToCustomer(customerDTO))
+        );
     }
 
     @GetMapping(value = "/{id}")
-    public Customer getCustomersById(@PathVariable("id") Long id) {
-        return customerService.getCustomerById(id);
+    public CustomerDto getCustomersById(@PathVariable("id") Long id) {
+        return CustomerMapper.INSTANCE.customerToCustomerDto(customerService.getCustomerById(id));
     }
 
     // TODO All logic from controller should be moved into Services (like CustomerServices)
     //  it is better for JUnit testing
     // TODO delete should be with DELETE method only
     @DeleteMapping(value = "{id}")
-    public Customer deleteCustomerById(@PathVariable("id") Long id) {
+    public CustomerDto deleteCustomerById(@PathVariable("id") Long id) {
        if (id >= 0) { //myslim ze id je nezaporne
-           return customerService.deleteCustomerById(id);
+           return CustomerMapper.INSTANCE.customerToCustomerDto(customerService.deleteCustomerById(id));
        } else {
            return null; //zase raz ak neexistuje customer ktoreho chcem vymazat je to neuspech?
        }
@@ -54,9 +56,11 @@ public class CustomerController {
 
     //TODO update is with PUT method
     @PutMapping
-    public Customer updateCustomer(@RequestBody CustomerDto customerDTO) {
+    public CustomerDto updateCustomer(@RequestBody CustomerDto customerDTO) {
         if (customerDTO != null) {
-            return customerService.updateCustomer(CustomerMapper.INSTANCE.customerDtoToCustomer(customerDTO));
+            return CustomerMapper.INSTANCE.customerToCustomerDto(
+                    customerService.updateCustomer(CustomerMapper.INSTANCE.customerDtoToCustomer(customerDTO))
+            );
         } else {
             return null; // updatnutie so zlym vstupom netreba riesit
         }

@@ -40,8 +40,11 @@ public class TeaService {
     }
 
     public Tea deleteTeaById(Long id) {
+        List<Customer> customers;
         Optional<Tea> tea = teaRepository.findById(id);
         if (tea.isPresent()) {
+            customers = tea.get().getCustomers();
+            System.out.println(customers); //ked je toto a rovnake v TeaController zakomentovane TeaMapper hadze chybu
             teaRepository.deleteById(id);
         }
 

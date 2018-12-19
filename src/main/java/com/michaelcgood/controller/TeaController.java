@@ -24,34 +24,41 @@ public class TeaController {
     }
 
     @PostMapping
-    public Tea addTea(Tea tea) {
-        return teaService.addTea(tea);
+    public TeaDto addTea(@RequestBody TeaDto teaDto) {
+        return TeaMapper.INSTANCE.teaToTeaDto(teaService.addTea(TeaMapper.INSTANCE.teaDtoToTea(teaDto)));
     }
 
     @GetMapping(value = "/{id}")
-    public Tea getTeaById(@PathVariable("id") Long id) {
+    public TeaDto getTeaById(@PathVariable("id") Long id) {
         if (id >= 0) {
-            return teaService.getTeaById(id);
+            return TeaMapper.INSTANCE.teaToTeaDto(teaService.getTeaById(id));
         } else {
             return null;
         }
     }
 
     @DeleteMapping(value = "{id}")
-    public Tea deleteTeaById(@PathVariable("id") Long id) {
+    public TeaDto deleteTeaById(@PathVariable("id") Long id) {
+        TeaDto result;
+        Tea preresult;
+        List<Customer> customers;
         // nejaka pekna podmienka ze vstup je validny
         if (id >= 0) {
-            return teaService.deleteTeaById(id);
+            preresult = teaService.deleteTeaById(id);
+            customers = preresult.getCustomers();
+            System.out.println(customers); //ked je toto a rovnake v TeaCService zakomentovane TeaMapper hadze chybu
+            result = TeaMapper.INSTANCE.teaToTeaDto(preresult);
+            return result;
         } else {
             return null;
         }
     }
 
     @PutMapping
-    public Tea updateTea(@RequestBody Tea tea) {
+    public TeaDto updateTea(@RequestBody Tea tea) {
         // nejaka pekna podmienka ze vstup je validny
         if (tea != null) {
-            return teaService.updateTea(tea);
+            return TeaMapper.INSTANCE.teaToTeaDto(teaService.updateTea(tea));
         } else {
             return null;
         }

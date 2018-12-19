@@ -94,8 +94,10 @@ public class CustomerControllerTest {
         teas.add(tea0);
         teas.add(tea1);
         inputCustomer = "{\"id\":57,\"firstName\":\"Alexander\",\"lastName\":\"Velky\"}";
+//        targetOutputCustomer =
+//                "{\"id\":57,\"firstName\":\"Alexander\",\"lastName\":\"Velky\",\"favouriteTeas\":null}";
         targetOutputCustomer =
-                "{\"id\":57,\"firstName\":\"Alexander\",\"lastName\":\"Velky\",\"favouriteTeas\":null}";
+                "{\"id\":57,\"firstName\":\"Alexander\",\"lastName\":\"Velky\"}";
         targetOutputTea =
                 "{\"id\":57,\"name\":\"Bancha\",\"typeOfTea\":\"green tea\"," +
                     "\"countryOfOrigin\":\"Japan\"}";//,\"customers\":null}";

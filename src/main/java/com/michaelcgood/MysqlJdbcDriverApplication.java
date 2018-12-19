@@ -62,11 +62,13 @@ public class MysqlJdbcDriverApplication {
             teaRepository.save(new Tea("Bancha", "green tea", "Japan"));
             teaRepository.save(new Tea("Baihao Yinzhen", "white tea", "China"));
             teaRepository.save(new Tea("Keemun", "black tea", "China"));
-            Customer customer0 = new Customer("Charles", "the 4th");
+            List<Customer> customers = new ArrayList<Customer>();
+            customers.add(new Customer("Charles", "the 4th"));
             List<Tea> teas = new ArrayList<Tea>();
             teas.add(new Tea("Baihao Yinzhen", "white tea", "China"));
-            customer0.setFavouriteTeas(teas);
-            customerRepository.save(customer0);
+            teas.get(0).setCustomers(customers);
+            customers.get(0).setFavouriteTeas(teas);
+            customerRepository.save(customers.get(0));
 
             // fetch all customers
             log.info("Customers found with findAll():");

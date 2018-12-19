@@ -21,7 +21,7 @@ public class Tea {
     private String countryOfOrigin;
 
     @ManyToMany(mappedBy = "favouriteTeas")
-    private List<Customer> customers; // zoznam zakaznikov oblubijucich tento caj
+    @Setter @Getter private List<Customer> customers; // zoznam zakaznikov oblubijucich tento caj
 
 //    TODO not necessary constructor - check lombock @NoArgsConstructor
 ////      it seems that mapper wants empty constructor before lombok generates one

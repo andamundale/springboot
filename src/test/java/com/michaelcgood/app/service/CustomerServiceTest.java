@@ -199,7 +199,7 @@ public class CustomerServiceTest {
 
         assertThat(customers.get(1).getFirstName(), is("Charles"));
         assertThat(customers.get(1).getLastName(),is("the 4th"));
-        assertNull(customers.get(1).getFavouriteTeas());
+        assertThat(customers.get(1).getFavouriteTeas(), is(new ArrayList<Tea>()));
         assertThat(customers.get(1).getId(), is(id1));
     }
 }

@@ -1,15 +1,11 @@
 package com.michaelcgood.app.controller.integration;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.github.springtestdbunit.annotation.ExpectedDatabase;
-import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
 import com.michaelcgood.model.Customer;
 import com.michaelcgood.model.Tea;
 import com.michaelcgood.repository.CustomerRepository;
 import com.michaelcgood.repository.TeaRepository;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,9 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
@@ -40,7 +34,6 @@ import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -49,16 +42,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @FixMethodOrder(MethodSorters.DEFAULT)
 @SpringBootTest
 @RunWith(SpringRunner.class)
-//@RunWith(SpringJUnit4ClassRunner.class)
-//@ContextConfiguration(classes = {ExampleApplicationContext.class})
-//@ContextConfiguration(locations = {"classpath:exampleApplicationContext.xml"})
 @WebAppConfiguration
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
         DirtiesContextTestExecutionListener.class,
         TransactionalTestExecutionListener.class,
         DbUnitTestExecutionListener.class })
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class CustomerControllerIntegrationTest {
+public class TeaControllerIntegrationTest {
 
     @Resource
     private WebApplicationContext webApplicationContext;
@@ -71,13 +61,23 @@ public class CustomerControllerIntegrationTest {
 //    @Autowired
 //    private TeaRepository teaRepository;
 
-    private String inputCustomer, updateCustomer;
+    private String inputCustomer, updateCustomer, inputTea, inputTea2, updateTea, targetOutputTea;
 
     private Long firstId;
 
     @Before
-    public void init() throws Exception {
+    public void setup() throws Exception {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+        inputCustomer = "{\"id\":12,\"firstName\":\"Alexander\",\"lastName\":\"Velky\"}";
+        updateCustomer = "{\"id\":12,\"firstName\":\"Alexander\",\"lastName\":\"Macedonsky\"}";
+        inputTea = "{\"id\":12,\"name\":\"Genmaicha\",\"typeOfTea\":\"green tea\"," +
+                "\"countryOfOrigin\":\"Japan\"}";
+        inputTea2 = "{\"id\":12,\"name\":\"Pai Mu Tan\",\"typeOfTea\":\"white tea\"," +
+                        "\"countryOfOrigin\":\"China\"}";
+        updateTea = "{\"id\":6,\"name\":\"Genmaicha\",\"typeOfTea\":\"green tea\"," +
+                        "\"countryOfOrigin\":\"Japan\"}";
+        targetOutputTea = "{\"id\":6,\"name\":\"Genmaicha\",\"typeOfTea\":\"green tea\"," +
+                        "\"countryOfOrigin\":\"Japan\",\"customers\":[]}";
         /*
         customerRepository.deleteAll();
         teaRepository.deleteAll();
@@ -96,29 +96,27 @@ public class CustomerControllerIntegrationTest {
         teas.add(new Tea("Baihao Yinzhen", "white tea", "China"));
         customer0.setFavouriteTeas(teas);
         customerRepository.save(customer0);
-        firstId--;
         /**/
-        //inputCustomer = "{\"id\":12,\"firstName\":\"Alexander\",\"lastName\":\"Velky\"}";
-        //updateCustomer = "{\"id\":12,\"firstName\":\"Alexander\",\"lastName\":\"Macedonsky\"}";
-        inputCustomer = "{\"id\":12,\"firstName\":\"Alexander\",\"lastName\":\"Velky\"}";
-        updateCustomer = "{\"id\":1,\"firstName\":\"JACK\",\"lastName\":\"BAUER\"}";
     }
 
     @Test
-    public void testGetAllCustomers() throws Exception {
-        mockMvc.perform(get("/customer/v1/"))
+    public void testGetAllTeas() throws Exception {
+        mockMvc.perform(get("/tea/v1/"))
                 .andExpect(status().isOk())
                 //.andDo(print())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$", hasSize(6))) //defaultne 6 ale zalezi od poradia testov
-                .andExpect(jsonPath("$[0].id", is(1)))
-                .andExpect(jsonPath("$[0].firstName", is("Jack")))
-                .andExpect(jsonPath("$[0].lastName", is("Bauer")))
-                .andExpect(jsonPath("$[1].id", is(2)))
-                .andExpect(jsonPath("$[1].firstName", is("Chloe")))
-                .andExpect(jsonPath("$[1].lastName", is("O'Brian")));
-    }
+                .andExpect(jsonPath("$", hasSize(5))) //defaultne 6 ale zalezi od poradia testov
+                .andExpect(jsonPath("$[0].id", is(6)))
+                .andExpect(jsonPath("$[0].name", is("Sencha")))
+                .andExpect(jsonPath("$[0].typeOfTea", is("green tea")))
+                .andExpect(jsonPath("$[0].countryOfOrigin", is("Japan")))
 
+                .andExpect(jsonPath("$[1].id", is(7)))
+                .andExpect(jsonPath("$[1].name", is("Bancha")))
+                .andExpect(jsonPath("$[1].typeOfTea", is("green tea")))
+                .andExpect(jsonPath("$[1].countryOfOrigin", is("Japan")));
+    }
+/*
     @Test
     public void testGetCustomersFavouriteTeasByCustomerId() throws Exception {
         mockMvc.perform(get("/customer/v1/getFavouriteTeas/10"))
@@ -131,40 +129,69 @@ public class CustomerControllerIntegrationTest {
                 .andExpect(jsonPath("$[0].typeOfTea", is("white tea")))
                 .andExpect(jsonPath("$[0].countryOfOrigin", is("China")));
     }
-
+/**/
+/**/
     @Test
-    public void testAddCustomer() throws Exception {
-        mockMvc.perform(post("/customer/v1/")
+    public void testAddTea() throws Exception {
+        mockMvc.perform(post("/tea/v1/")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(inputCustomer))
+                .content(inputTea2))
                 .andExpect(status().isOk())
                 //.andDo(print())
                 .andExpect(jsonPath("id", is(12)))
-                .andExpect(jsonPath("firstName", is("Alexander")))
-                .andExpect(jsonPath("lastName", is("Velky")));
+                .andExpect(jsonPath("name", is("Pai Mu Tan")))
+                .andExpect(jsonPath("typeOfTea", is("white tea")))
+                .andExpect(jsonPath("countryOfOrigin", is("China")));
     }
-
+/**/
+/**/
     @Test
-    public void testUpdateCustomer() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.put("/customer/v1/")
+    public void testUpdateTea() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.put("/tea/v1/")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(updateCustomer))
+                .content(updateTea))
                 .andExpect(status().isOk())
                 //.andDo(print())
-                .andExpect(jsonPath("id", is(1)))
-                .andExpect(jsonPath("firstName", is("JACK")))
-                .andExpect(jsonPath("lastName", is("BAUER")));
+                .andExpect(jsonPath("id", is(6)))
+                .andExpect(jsonPath("name", is("Genmaicha")))
+                .andExpect(jsonPath("typeOfTea", is("green tea")))
+                .andExpect(jsonPath("countryOfOrigin", is("Japan")));
+    }
+/**/
+/**/
+    @Test
+    public void testDeleteTeaById() throws Exception {
+        mockMvc.perform(delete("/tea/v1/6")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                //.andDo(print())
+                .andExpect(jsonPath("id", is(6)))
+                .andExpect(jsonPath("name", is("Sencha")))
+                .andExpect(jsonPath("typeOfTea", is("green tea")))
+                .andExpect(jsonPath("countryOfOrigin", is("Japan")));
+    }
+/**/
+    @Test
+    public void testGetTeaById() throws Exception {
+        mockMvc.perform(get("/tea/v1/6")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                //.andDo(print())
+                .andExpect(jsonPath("id", is(6)))
+                .andExpect(jsonPath("name", is("Sencha")))
+                .andExpect(jsonPath("typeOfTea", is("green tea")))
+                .andExpect(jsonPath("countryOfOrigin", is("Japan")));
     }
 
     @Test
-    public void testDeleteCustomerById() throws Exception {
-        mockMvc.perform(delete("/customer/v1/1")
-                .contentType(MediaType.APPLICATION_JSON))
-                //.content("12"))
+    public void testGetTeasCustomersByTeaId() throws Exception {
+        mockMvc.perform(get("/tea/v1/getCustomersFavouringTea/11"))
                 .andExpect(status().isOk())
                 //.andDo(print())
-                .andExpect(jsonPath("id", is(1)))
-                .andExpect(jsonPath("firstName", is("Jack")))
-                .andExpect(jsonPath("lastName", is("Bauer")));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$", hasSize(1))) //defaultne 6 ale zalezi od poradia testov
+                .andExpect(jsonPath("$[0].id", is(10)))
+                .andExpect(jsonPath("$[0].firstName", is("Charles")))
+                .andExpect(jsonPath("$[0].lastName", is("the 4th")));
     }
 }

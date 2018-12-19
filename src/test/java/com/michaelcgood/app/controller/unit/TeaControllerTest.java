@@ -72,14 +72,19 @@ public class TeaControllerTest {
         teas.add(tea0);
         teas.add(tea1);
         inputCustomer = "{\"id\":57,\"firstName\":\"Alexander\",\"lastName\":\"Velky\"}";
+//        targetOutputCustomer =
+//                "{\"id\":57,\"firstName\":\"Alexander\",\"lastName\":\"Velky\",\"favouriteTeas\":null}";
         targetOutputCustomer =
-                "{\"id\":57,\"firstName\":\"Alexander\",\"lastName\":\"Velky\",\"favouriteTeas\":null}";
+                "{\"id\":57,\"firstName\":\"Alexander\",\"lastName\":\"Velky\"}";
         inputTea =
                 "{\"id\":57,\"name\":\"Bancha\",\"typeOfTea\":\"green tea\"," +
                         "\"countryOfOrigin\":\"Japan\"}";
+//        targetOutputTea =
+//                "{\"id\":57,\"name\":\"Bancha\",\"typeOfTea\":\"green tea\"," +
+//                        "\"countryOfOrigin\":\"Japan\",\"customers\":[]}";
         targetOutputTea =
                 "{\"id\":57,\"name\":\"Bancha\",\"typeOfTea\":\"green tea\"," +
-                        "\"countryOfOrigin\":\"Japan\",\"customers\":[]}";
+                        "\"countryOfOrigin\":\"Japan\"}";
         teaDto = new TeaDto();
         teaDto.setId(new Long(57));
         teaDto.setName("Bancha");
