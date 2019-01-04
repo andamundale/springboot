@@ -52,23 +52,34 @@ public class MysqlJdbcDriverApplication {
     //public void demo(CustomerRepository repository) throws Exception {
         return (args) -> {
             // save a couple of customers and teas
+            List<Long> customers = new ArrayList<Long>();
+            List<Long> teas = new ArrayList<Long>();
+            Tea tea0, tea1;
+            Customer customer0;
             System.out.println("Preloading database.");
             customerRepository.save(new Customer("Jack", "Bauer"));
             customerRepository.save(new Customer("Chloe", "O'Brian"));
             customerRepository.save(new Customer("Kim", "Bauer"));
             customerRepository.save(new Customer("David", "Palmer"));
             customerRepository.save(new Customer("Michelle", "Dessler"));
+            customer0 = customerRepository.save(new Customer("Charles", "the 4th"));
+            //System.out.println(customer0);
             teaRepository.save(new Tea("Sencha", "green tea", "Japan"));
             teaRepository.save(new Tea("Bancha", "green tea", "Japan"));
-            teaRepository.save(new Tea("Baihao Yinzhen", "white tea", "China"));
-            teaRepository.save(new Tea("Keemun", "black tea", "China"));
-            List<Customer> customers = new ArrayList<Customer>();
-            customers.add(new Customer("Charles", "the 4th"));
-            List<Tea> teas = new ArrayList<Tea>();
-            teas.add(new Tea("Baihao Yinzhen", "white tea", "China"));
-            teas.get(0).setCustomers(customers);
-            customers.get(0).setFavouriteTeas(teas);
-            customerRepository.save(customers.get(0));
+            tea0 = teaRepository.save(new Tea("Baihao Yinzhen", "white tea", "China"));
+            //System.out.println(tea0);
+            tea1 = teaRepository.save(new Tea("Keemun", "black tea", "China"));
+            //System.out.println(tea1);
+            customer0.getFavouriteTeas().add(tea0);
+            customer0.getFavouriteTeas().add(tea1);
+            tea0.getCustomers().add(customer0);
+            tea1.getCustomers().add(customer0);
+            customer0 = customerRepository.save(customer0);
+            //System.out.println(customer0);
+            tea0 = teaRepository.save(tea0);
+            //System.out.println(tea0);
+            tea1 = teaRepository.save(tea1);
+            //System.out.println(tea1);
 
             // fetch all customers
             log.info("Customers found with findAll():");

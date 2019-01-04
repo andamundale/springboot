@@ -85,11 +85,8 @@ public class TeaControllerTest {
         targetOutputTea =
                 "{\"id\":57,\"name\":\"Bancha\",\"typeOfTea\":\"green tea\"," +
                         "\"countryOfOrigin\":\"Japan\"}";
-        teaDto = new TeaDto();
-        teaDto.setId(new Long(57));
-        teaDto.setName("Bancha");
-        teaDto.setTypeOfTea("green tea");
-        teaDto.setCountryOfOrigin("Japan");
+        teaDto = new TeaDto("Bancha", "green tea", "Japan");
+        //teaDto.setId(new Long(57));
     }
 
     @Test
