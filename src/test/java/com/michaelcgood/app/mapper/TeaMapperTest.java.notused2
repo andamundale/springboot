@@ -28,10 +28,7 @@ public class TeaMapperTest {
 
     @Test
     public void teaDtoToteaTest() {
-        TeaDto teaDto = new TeaDto();
-        teaDto.setName("Sencha");
-        teaDto.setTypeOfTea("green tea");
-        teaDto.setCountryOfOrigin("Japan");
+        TeaDto teaDto = new TeaDto("Sencha", "green tea", "Japan");
 
         //when
         Tea tea = TeaMapper.INSTANCE.teaDtoToTea( teaDto );

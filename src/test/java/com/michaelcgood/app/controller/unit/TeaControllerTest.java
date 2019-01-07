@@ -74,22 +74,24 @@ public class TeaControllerTest {
         inputCustomer = "{\"id\":57,\"firstName\":\"Alexander\",\"lastName\":\"Velky\"}";
 //        targetOutputCustomer =
 //                "{\"id\":57,\"firstName\":\"Alexander\",\"lastName\":\"Velky\",\"favouriteTeas\":null}";
+//        targetOutputCustomer =
+//                "{\"id\":57,\"firstName\":\"Alexander\",\"lastName\":\"Velky\"}";
         targetOutputCustomer =
-                "{\"id\":57,\"firstName\":\"Alexander\",\"lastName\":\"Velky\"}";
+                "{\"firstName\":\"Alexander\",\"lastName\":\"Velky\"}";
         inputTea =
                 "{\"id\":57,\"name\":\"Bancha\",\"typeOfTea\":\"green tea\"," +
                         "\"countryOfOrigin\":\"Japan\"}";
 //        targetOutputTea =
 //                "{\"id\":57,\"name\":\"Bancha\",\"typeOfTea\":\"green tea\"," +
 //                        "\"countryOfOrigin\":\"Japan\",\"customers\":[]}";
+//        targetOutputTea =
+//                "{\"id\":57,\"name\":\"Bancha\",\"typeOfTea\":\"green tea\"," +
+//                        "\"countryOfOrigin\":\"Japan\"}";
         targetOutputTea =
-                "{\"id\":57,\"name\":\"Bancha\",\"typeOfTea\":\"green tea\"," +
+                "{\"name\":\"Bancha\",\"typeOfTea\":\"green tea\"," +
                         "\"countryOfOrigin\":\"Japan\"}";
-        teaDto = new TeaDto();
-        teaDto.setId(new Long(57));
-        teaDto.setName("Bancha");
-        teaDto.setTypeOfTea("green tea");
-        teaDto.setCountryOfOrigin("Japan");
+        teaDto = new TeaDto("Bancha", "green tea", "Japan");
+        //teaDto.setId(new Long(57));
     }
 
     @Test
@@ -99,12 +101,12 @@ public class TeaControllerTest {
 
         mockMvc.perform(get("/tea/v1/").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id", is(57)))
+                //.andExpect(jsonPath("$[0].id", is(57)))
                 .andExpect(jsonPath("$[0].name", is("Bancha")))
                 .andExpect(jsonPath("$[0].typeOfTea", is("green tea")))
                 .andExpect(jsonPath("$[0].countryOfOrigin", is("Japan")))
 
-                .andExpect(jsonPath("$[1].id", is(31)))
+                //.andExpect(jsonPath("$[1].id", is(31)))
                 .andExpect(jsonPath("$[1].name", is("Pai Mu Tan")))
                 .andExpect(jsonPath("$[1].typeOfTea", is("white tea")))
                 .andExpect(jsonPath("$[1].countryOfOrigin", is("China")));
@@ -118,10 +120,10 @@ public class TeaControllerTest {
 
         mockMvc.perform(get("/tea/v1/getCustomersFavouringTea/5").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id", is(57)))
+                //.andExpect(jsonPath("$[0].id", is(57)))
                 .andExpect(jsonPath("$[0].firstName", is("Alexander")))
                 .andExpect(jsonPath("$[0].lastName", is("Velky")))
-                .andExpect(jsonPath("$[1].id", is(31)))
+                //.andExpect(jsonPath("$[1].id", is(31)))
                 .andExpect(jsonPath("$[1].firstName", is("Charles")))
                 .andExpect(jsonPath("$[1].lastName", is("the 4th")));
         verify(teaService, times(1)).getTeasCustomersByTeaId(any(Long.class));
@@ -147,7 +149,7 @@ public class TeaControllerTest {
         mockMvc.perform(get("/tea/v1/1")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("id", is(57)))
+                //.andExpect(jsonPath("id", is(57)))
                 .andExpect(jsonPath("name", is("Bancha")))
                 .andExpect(jsonPath("typeOfTea", is("green tea")))
                 .andExpect(jsonPath("countryOfOrigin", is("Japan")));
@@ -161,7 +163,7 @@ public class TeaControllerTest {
 
         mockMvc.perform(delete("/tea/v1/1").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("id", is(57)))
+                //.andExpect(jsonPath("id", is(57)))
                 .andExpect(jsonPath("name", is("Bancha")))
                 .andExpect(jsonPath("typeOfTea", is("green tea")))
                 .andExpect(jsonPath("countryOfOrigin", is("Japan")));
@@ -176,7 +178,7 @@ public class TeaControllerTest {
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(inputCustomer))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("id", is(57)))
+                //.andExpect(jsonPath("id", is(57)))
                 .andExpect(jsonPath("name", is("Bancha")))
                 .andExpect(jsonPath("typeOfTea", is("green tea")))
                 .andExpect(jsonPath("countryOfOrigin", is("Japan")));

@@ -2,6 +2,7 @@ package com.michaelcgood.model;
 
 import javax.persistence.*;
 
+import com.michaelcgood.model.dto.CustomerDto;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,9 +38,17 @@ public class Customer {
 
 
     public Customer(String firstName, String lastName) {
+        this.id = new Long(0);
         this.firstName = firstName;
         this.lastName = lastName;
         this.favouriteTeas = new ArrayList<Tea>();
+    }
+
+    public Customer(String firstName, String lastName, List<Tea> favouriteTeas) {
+        this.id = new Long(0);
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.favouriteTeas = favouriteTeas;
     }
 
     @Override
@@ -47,6 +56,10 @@ public class Customer {
         return String.format(
                 "Customer[id=%d, firstName='%s', lastName='%s']",
                 id, firstName, lastName);
+    }
+
+    public CustomerDto convertToDto() {
+        return new CustomerDto(this.firstName, this.lastName);
     }
 
 }

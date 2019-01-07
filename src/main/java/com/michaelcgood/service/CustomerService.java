@@ -22,14 +22,13 @@ public class CustomerService {
 
     public Customer addCustomer(Customer customer) {
         if (
-//            customerRepository.findByLastName(customer.getLastName()) != null
-//            && customerRepository.findByFirstName(customer.getFirstName()) != null
-            customerRepository.existsById(customer.getId())
+            customerRepository.findByFirstNameAndLastName(customer.getFirstName(), customer.getLastName()).isEmpty()
         ) {
-            return null; //customer s takym id uz existuje
-        } else {
             customerRepository.save(customer);
+
             return customer;
+        } else {
+            return null; //customer s takym id uz existuje
         }
     }
 

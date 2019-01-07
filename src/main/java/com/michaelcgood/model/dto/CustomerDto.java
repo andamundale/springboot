@@ -1,24 +1,22 @@
 package com.michaelcgood.model.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.michaelcgood.model.Tea;
-import lombok.Data;
+import com.michaelcgood.model.Customer;
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.Value;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
-@Data
-@NoArgsConstructor
+@Value
+@NoArgsConstructor(force = true)
+@AllArgsConstructor
 public class CustomerDto {
-    @Id
-    //@JsonIgnore
-    private Long id;
-    @NotNull
-    private String firstName;
-    @NotNull
-    private String lastName;
-    @JsonIgnore
-    private List<Tea> favouriteTeas;  // zakaznikove oblubene caje}
+    //Long id;
+    String firstName;
+    String lastName;
+    //private List<Tea> favouriteTeas;  // zakaznikove oblubene caje}
+
+    public Customer convertToEntity() {
+        return new Customer(this.firstName, this.lastName);
+    }
 }

@@ -31,9 +31,7 @@ public class CustomerMapperTest {
 
     @Test
     public void customerDtoToCustomerTest() {
-        CustomerDto customerDto = new CustomerDto();
-        customerDto.setFirstName("Alexander");
-        customerDto.setLastName("Velky");
+        CustomerDto customerDto = new CustomerDto("Alexander", "Velky");
 
         //when
         Customer customer = CustomerMapper.INSTANCE.customerDtoToCustomer( customerDto );

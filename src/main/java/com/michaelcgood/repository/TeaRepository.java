@@ -1,15 +1,23 @@
 package com.michaelcgood.repository;
 
 import com.michaelcgood.model.Tea;
+import com.michaelcgood.model.dto.TeaDto;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface TeaRepository extends CrudRepository<Tea, Long> {
 
-    List<Tea> findByName(String name);
+    Optional<Tea> findById(Long id);
 
-    List<Tea> findByTypeOfTea(String name);
+    List<TeaDto> findById(List<Long> customers);
 
-    List<Tea> findByCountryOfOrigin(String name);
+    List<TeaDto> findByName(String name);
+
+    List<TeaDto> findByTypeOfTea(String name);
+
+    List<TeaDto> findByCountryOfOrigin(String name);
+
+    List<Tea> findByNameAndCountryOfOrigin(String name, String countryOfOrigin);
 }

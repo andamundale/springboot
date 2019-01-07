@@ -1,7 +1,7 @@
 package com.michaelcgood.controller;
 
-import com.michaelcgood.mapper.CustomerMapper;
-import com.michaelcgood.mapper.TeaMapper;
+//import com.michaelcgood.mapper.CustomerMapper;
+//import com.michaelcgood.mapper.TeaMapper;
 import com.michaelcgood.model.Customer;
 import com.michaelcgood.model.Tea;
 import com.michaelcgood.model.dto.CustomerDto;
@@ -25,13 +25,14 @@ public class TeaController {
 
     @PostMapping
     public TeaDto addTea(@RequestBody TeaDto teaDto) {
-        return TeaMapper.INSTANCE.teaToTeaDto(teaService.addTea(TeaMapper.INSTANCE.teaDtoToTea(teaDto)));
+        //return TeaMapper.INSTANCE.teaToTeaDto(teaService.addTea(TeaMapper.INSTANCE.teaDtoToTea(teaDto)));
+        return teaService.addTea(teaDto.convertToEntity()).convertToDto();
     }
 
     @GetMapping(value = "/{id}")
     public TeaDto getTeaById(@PathVariable("id") Long id) {
         if (id >= 0) {
-            return TeaMapper.INSTANCE.teaToTeaDto(teaService.getTeaById(id));
+            return teaService.getTeaById(id).convertToDto();
         } else {
             return null;
         }
@@ -40,15 +41,9 @@ public class TeaController {
     @DeleteMapping(value = "{id}")
     public TeaDto deleteTeaById(@PathVariable("id") Long id) {
         TeaDto result;
-        Tea preresult;
-        List<Customer> customers;
         // nejaka pekna podmienka ze vstup je validny
         if (id >= 0) {
-            preresult = teaService.deleteTeaById(id);
-            customers = preresult.getCustomers();
-            System.out.println(customers); //ked je toto a rovnake v TeaCService zakomentovane TeaMapper hadze chybu
-            result = TeaMapper.INSTANCE.teaToTeaDto(preresult);
-            return result;
+            return teaService.deleteTeaById(id).convertToDto();
         } else {
             return null;
         }
@@ -58,7 +53,7 @@ public class TeaController {
     public TeaDto updateTea(@RequestBody Tea tea) {
         // nejaka pekna podmienka ze vstup je validny
         if (tea != null) {
-            return TeaMapper.INSTANCE.teaToTeaDto(teaService.updateTea(tea));
+            return teaService.updateTea(tea).convertToDto();
         } else {
             return null;
         }
@@ -70,8 +65,9 @@ public class TeaController {
         // nejaka pekna podmienka ze vstup je validny
         if (id >= 0) {
             for (Customer customer: teaService.getTeasCustomersByTeaId(id)){
-                result.add(CustomerMapper.INSTANCE.customerToCustomerDto(customer));
+                result.add(customer.convertToDto());
             }
+
             return result;
         } else {
             return new ArrayList<CustomerDto>();
@@ -82,8 +78,9 @@ public class TeaController {
     public List<TeaDto> getAllTeas() {
         List<TeaDto> result = new ArrayList<TeaDto>();
         for (Tea tea: teaService.getAllTeas()) {
-            result.add(TeaMapper.INSTANCE.teaToTeaDto(tea));
+            result.add(tea.convertToDto());
         }
+
         return result;
     };
 

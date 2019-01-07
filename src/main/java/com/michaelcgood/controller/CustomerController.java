@@ -1,7 +1,7 @@
 package com.michaelcgood.controller;
 
-import com.michaelcgood.mapper.CustomerMapper;
-import com.michaelcgood.mapper.TeaMapper;
+//import com.michaelcgood.mapper.CustomerMapper;
+//import com.michaelcgood.mapper.TeaMapper;
 import com.michaelcgood.model.Customer;
 import com.michaelcgood.model.Tea;
 import com.michaelcgood.model.dto.CustomerDto;
@@ -31,15 +31,13 @@ public class CustomerController {
         // swagger seems to not work with /addCustomer removed
     // return values should be the added object (always)
     @PostMapping
-    public CustomerDto addCustomer(@RequestBody CustomerDto customerDTO) {
-        return CustomerMapper.INSTANCE.customerToCustomerDto(
-                customerService.addCustomer(CustomerMapper.INSTANCE.customerDtoToCustomer(customerDTO))
-        );
+    public CustomerDto addCustomer(@RequestBody CustomerDto customerDto) {
+        return customerService.addCustomer(customerDto.convertToEntity()).convertToDto();
     }
 
     @GetMapping(value = "/{id}")
     public CustomerDto getCustomersById(@PathVariable("id") Long id) {
-        return CustomerMapper.INSTANCE.customerToCustomerDto(customerService.getCustomerById(id));
+        return customerService.getCustomerById(id).convertToDto();
     }
 
     // TODO All logic from controller should be moved into Services (like CustomerServices)
@@ -48,7 +46,7 @@ public class CustomerController {
     @DeleteMapping(value = "{id}")
     public CustomerDto deleteCustomerById(@PathVariable("id") Long id) {
        if (id >= 0) { //myslim ze id je nezaporne
-           return CustomerMapper.INSTANCE.customerToCustomerDto(customerService.deleteCustomerById(id));
+           return customerService.deleteCustomerById(id).convertToDto();
        } else {
            return null; //zase raz ak neexistuje customer ktoreho chcem vymazat je to neuspech?
        }
@@ -56,11 +54,9 @@ public class CustomerController {
 
     //TODO update is with PUT method
     @PutMapping
-    public CustomerDto updateCustomer(@RequestBody CustomerDto customerDTO) {
-        if (customerDTO != null) {
-            return CustomerMapper.INSTANCE.customerToCustomerDto(
-                    customerService.updateCustomer(CustomerMapper.INSTANCE.customerDtoToCustomer(customerDTO))
-            );
+    public CustomerDto updateCustomer(@RequestBody Customer customer) {
+        if (customer != null) {
+            return customerService.updateCustomer(customer).convertToDto();
         } else {
             return null; // updatnutie so zlym vstupom netreba riesit
         }
@@ -69,14 +65,14 @@ public class CustomerController {
     @PostMapping(value = "/addCustomersTeaById/{customerId}/{teaId}")
     public TeaDto addCustomersTea(@PathVariable Long customerId, @PathVariable Long teaId) {
         // tu by zase mohla byt podmienka ci vstupy su validne ID
-        return TeaMapper.INSTANCE.teaToTeaDto(customerService.addCustomersTea(customerId, teaId));
+        return customerService.addCustomersTea(customerId, teaId).convertToDto();
     }
 
 
     @DeleteMapping(value = "/deleteCustomersTeaById/{customerId}/{teaId}")
     public TeaDto deleteCustomersTeaById(@PathVariable Long customerId, @PathVariable Long teaId) {
         // tu by zase mohla byt podmienka ci vstupy su validne ID
-        return TeaMapper.INSTANCE.teaToTeaDto(customerService.deleteCustomersTeaById(customerId, teaId));
+        return customerService.deleteCustomersTeaById(customerId, teaId).convertToDto();
     }
 
     @GetMapping(value = "/getFavouriteTeas/{id}")
@@ -84,7 +80,7 @@ public class CustomerController {
         // tu by zase mohla byt podmienka ci vstupy su validne ID
         List<TeaDto> result = new ArrayList<TeaDto>();
         for (Tea tea: customerService.getCustomersFavouriteTeasByCustomerId(id)) {
-            result.add(TeaMapper.INSTANCE.teaToTeaDto(tea));
+            result.add(tea.convertToDto());
         }
         return result;
     }
@@ -93,7 +89,7 @@ public class CustomerController {
     public List<CustomerDto> getAllCustomers() {
         List<CustomerDto> result = new ArrayList<CustomerDto>();
         for (Customer customer: customerService.getAllCustomers()) {
-            result.add(CustomerMapper.INSTANCE.customerToCustomerDto(customer));
+            result.add(customer.convertToDto());
         }
         return result;
     };

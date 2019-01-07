@@ -1,5 +1,6 @@
 package com.michaelcgood.model;
 
+import com.michaelcgood.model.dto.TeaDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -28,10 +29,19 @@ public class Tea {
 //    protected Tea() {}
 
     public Tea(String name, String typeOfTea, String countryOfOrigin) {
+        this.id = new Long(0);
         this.name = name;
         this.typeOfTea = typeOfTea;
         this.countryOfOrigin = countryOfOrigin;
         this.customers = new ArrayList<Customer>();
+    }
+
+    public Tea(String name, String typeOfTea, String countryOfOrigin, List<Customer> customers) {
+        this.id = new Long(0);
+        this.name = name;
+        this.typeOfTea = typeOfTea;
+        this.countryOfOrigin = countryOfOrigin;
+        this.customers = customers;
     }
 
     @Override
@@ -39,5 +49,9 @@ public class Tea {
         return String.format(
                 "Tea[id=%d, name='%s', typeOfTea='%s', countryOfOrigin='%s']",
                 id, name, typeOfTea, countryOfOrigin);
+    }
+
+    public TeaDto convertToDto() {
+        return new TeaDto(this.name, this.typeOfTea, this.countryOfOrigin);
     }
 }
