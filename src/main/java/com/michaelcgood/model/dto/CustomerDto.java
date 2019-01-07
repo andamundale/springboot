@@ -1,5 +1,6 @@
 package com.michaelcgood.model.dto;
 
+import com.michaelcgood.model.Customer;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Value;
@@ -14,4 +15,8 @@ public class CustomerDto {
     String firstName;
     String lastName;
     //private List<Tea> favouriteTeas;  // zakaznikove oblubene caje}
+
+    public Customer convertToEntity() {
+        return new Customer(this.firstName, this.lastName);
+    }
 }

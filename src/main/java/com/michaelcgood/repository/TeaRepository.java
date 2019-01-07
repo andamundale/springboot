@@ -18,4 +18,6 @@ public interface TeaRepository extends CrudRepository<Tea, Long> {
     List<TeaDto> findByTypeOfTea(String name);
 
     List<TeaDto> findByCountryOfOrigin(String name);
+
+    List<Tea> findByNameAndCountryOfOrigin(String name, String countryOfOrigin);
 }

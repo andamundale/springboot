@@ -1,5 +1,6 @@
 package com.michaelcgood.model.dto;
 
+import com.michaelcgood.model.Tea;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Value;
@@ -16,4 +17,7 @@ public class TeaDto {
     String countryOfOrigin;
     //List<Customer> customers; // zoznam zakaznikov oblubijucich tento caj
 
+    public Tea convertToEntity() {
+        return new Tea(this.name, this.typeOfTea, this.countryOfOrigin);
+    }
 }

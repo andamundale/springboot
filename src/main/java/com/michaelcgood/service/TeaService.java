@@ -21,7 +21,8 @@ public class TeaService {
     }
 
     public Tea addTea(Tea tea) {
-        if (!teaRepository.existsById(tea.getId())) {
+//        if (!teaRepository.existsById(tea.getId())) {
+        if (teaRepository.findByNameAndCountryOfOrigin(tea.getName(), tea.getCountryOfOrigin()).isEmpty()) {
             teaRepository.save(tea);
 
             return tea;
