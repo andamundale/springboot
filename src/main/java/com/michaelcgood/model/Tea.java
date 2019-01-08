@@ -1,7 +1,11 @@
 package com.michaelcgood.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.michaelcgood.model.dto.TeaDto;
 import lombok.*;
+import springfox.documentation.spring.web.json.Json;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -11,6 +15,9 @@ import java.util.List;
 @Table(name = "Tea")
 @Data
 @NoArgsConstructor
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class Tea {
 
     @Id
@@ -21,6 +28,7 @@ public class Tea {
     private String typeOfTea;
     private String countryOfOrigin;
 
+    //@JsonManagedReference
     @ManyToMany(mappedBy = "favouriteTeas")
     @Setter @Getter private List<Customer> customers; // zoznam zakaznikov oblubijucich tento caj
 

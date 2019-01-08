@@ -2,6 +2,8 @@ package com.michaelcgood.controller;
 
 //import com.michaelcgood.mapper.CustomerMapper;
 //import com.michaelcgood.mapper.TeaMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.michaelcgood.model.Customer;
 import com.michaelcgood.model.Tea;
 import com.michaelcgood.model.dto.CustomerDto;
@@ -12,12 +14,15 @@ import com.michaelcgood.service.CustomerService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping(value="customer/v1/", produces = MediaType.APPLICATION_JSON_VALUE)
 public class CustomerController {
+
+    private ObjectMapper objectMapper;
 
     private CustomerService customerService;
 
@@ -92,5 +97,17 @@ public class CustomerController {
             result.add(customer.convertToDto());
         }
         return result;
-    };
+    }
+
+    @GetMapping(value = "/getAllCustomersAsJson/")
+    public List<String> getAllCustomersAsJsonAsString() throws JsonProcessingException, IOException {
+        List<String> result = new ArrayList<String>();
+        objectMapper = new ObjectMapper();
+        for (Customer customer: customerService.getAllCustomers()) {
+            result .add(objectMapper.writeValueAsString(customer));
+        }
+
+        return result;
+    }
+
 }

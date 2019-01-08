@@ -2,6 +2,8 @@ package com.michaelcgood.controller;
 
 //import com.michaelcgood.mapper.CustomerMapper;
 //import com.michaelcgood.mapper.TeaMapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.michaelcgood.model.Customer;
 import com.michaelcgood.model.Tea;
 import com.michaelcgood.model.dto.CustomerDto;
@@ -9,13 +11,18 @@ import com.michaelcgood.model.dto.TeaDto;
 import com.michaelcgood.service.TeaService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.spring.web.json.Json;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping(value="tea/v1/", produces = MediaType.APPLICATION_JSON_VALUE)
 public class TeaController {
+
+    private ObjectMapper objectMapper;
 
     private TeaService teaService;
 
@@ -83,5 +90,21 @@ public class TeaController {
 
         return result;
     };
+
+    @GetMapping(value = "/getAllTeasAsJson/")
+    public List<String> getAllTeasAsJsonAsString() throws JsonProcessingException, IOException {
+        List<String> result = new ArrayList<String>();
+        //String tmpString;
+        //Json tmpJson;
+        objectMapper = new ObjectMapper();
+        for (Tea tea: teaService.getAllTeas()) {
+            //objectMapper.writeValue(new File("tmpJson.json"), tea);
+            //tmpString = objectMapper.writeValueAsString(tea);
+            //result.add(tmpString);
+            result .add(objectMapper.writeValueAsString(tea));
+        }
+
+        return result;
+    }
 
 }

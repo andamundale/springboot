@@ -1,5 +1,6 @@
 package com.michaelcgood.app.controller.integration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.ExpectedDatabase;
@@ -71,18 +72,24 @@ public class CustomerControllerIntegrationTest {
     @Autowired
     private TeaRepository teaRepository;
 
+    private ObjectMapper objectMapper;
+
     private String inputCustomer, updateCustomer, inputTea, inputTea2, updateTea, targetOutputTea;
 
     private Long firstId, customerId, teaId;
 
     private Tea favTea;
 
+    private List<Customer> customers;
+
     @Before
     public void init() throws Exception {
         Customer customer0;
         List<Tea> teas;
-        List<Customer> customers;
+        List<Customer> tmpCustomers;
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+        objectMapper = new ObjectMapper();
+        customers = new ArrayList<Customer>();
         /*
         customerRepository.deleteAll();
         teaRepository.deleteAll();
@@ -118,11 +125,11 @@ public class CustomerControllerIntegrationTest {
         teaRepository.deleteAll();
         System.out.println("Preloading database.");
         //firstId = customerRepository.save(new Customer("Jack", "Bauer")).getId();
-        customerRepository.save(new Customer("Jack", "Bauer"));
-        customerRepository.save(new Customer("Chloe", "O'Brian"));
-        customerRepository.save(new Customer("Kim", "Bauer"));
-        customerRepository.save(new Customer("David", "Palmer"));
-        customerRepository.save(new Customer("Michelle", "Dessler"));
+        customers.add(customerRepository.save(new Customer("Jack", "Bauer")));
+        customers.add(customerRepository.save(new Customer("Chloe", "O'Brian")));
+        customers.add(customerRepository.save(new Customer("Kim", "Bauer")));
+        customers.add(customerRepository.save(new Customer("David", "Palmer")));
+        customers.add(customerRepository.save(new Customer("Michelle", "Dessler")));
         teaId = teaRepository.save(new Tea("Sencha", "green tea", "Japan")).getId();
         teaRepository.save(new Tea("Bancha", "green tea", "Japan"));
         favTea = teaRepository.save(new Tea("Baihao Yinzhen", "white tea", "China"));
@@ -131,11 +138,12 @@ public class CustomerControllerIntegrationTest {
         teas = new ArrayList<Tea>();
         teas.add(favTea);
         customer0.setFavouriteTeas(teas);
-        customerId = customerRepository.save(customer0).getId();
+        customers.add(customerRepository.save(customer0));
+        customerId = customers.get(customers.size()-1).getId();
         customer0.setId(customerId);
-        customers = new ArrayList<Customer>();
-        customers.add(customer0);
-        favTea.setCustomers(customers);
+        tmpCustomers = new ArrayList<Customer>();
+        tmpCustomers.add(customer0);
+        favTea.setCustomers(tmpCustomers);
         teaRepository.save(favTea);
         /**/
         inputCustomer = "{\"id\":12,\"firstName\":\"Alexander\",\"lastName\":\"Velky\"}";
@@ -225,5 +233,18 @@ public class CustomerControllerIntegrationTest {
                 //.andExpect(jsonPath("id", is(1)))
                 .andExpect(jsonPath("firstName", is("Charles")))
                 .andExpect(jsonPath("lastName", is("the 4th")));
+    }
+
+    @Test
+    public void testGetAllCustomersAsJsonAsString() throws Exception {
+        mockMvc.perform(get("/customer/v1/getAllCustomersAsJson/"))
+                .andExpect(status().isOk())
+                //.andDo(print())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$", hasSize(6))) //defaultne 6 ale zalezi od poradia testov
+                //.andExpect(jsonPath("$[0].id", is(1)))
+                .andExpect(jsonPath("$[0]", is(objectMapper.writeValueAsString(customers.get(4)))))
+                //.andExpect(jsonPath("$[1].id", is(2)))
+                .andExpect(jsonPath("$[1]", is(objectMapper.writeValueAsString(customers.get(3)))));
     }
 }

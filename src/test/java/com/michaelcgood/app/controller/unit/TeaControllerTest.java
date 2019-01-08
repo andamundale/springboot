@@ -1,5 +1,6 @@
 package com.michaelcgood.app.controller.unit;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.michaelcgood.controller.TeaController;
 import com.michaelcgood.model.Customer;
 import com.michaelcgood.model.Tea;
@@ -43,6 +44,8 @@ public class TeaControllerTest {
 
     @MockBean
     TeaService teaService;
+
+    protected ObjectMapper objectMapper;
 
     /**
      * Lists of samples customers and teas
@@ -207,4 +210,16 @@ public class TeaControllerTest {
         verify(teaService, times(1)).deleteCustomersTeaById(any(Long.class), any(Long.class));
     }
 */
+
+    @Test
+    public void testGetAllCustomersAsJsonAsString() throws Exception {
+        objectMapper = new ObjectMapper();
+        when(teaService.getAllTeas()).thenReturn(teas);
+
+        mockMvc.perform(get("/tea/v1/getAllTeasAsJson/")
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[0]", is(objectMapper.writeValueAsString(teas.get(0)))));
+    }
+
 }

@@ -64,6 +64,8 @@ public class CustomerControllerTest {
     @MockBean
     CustomerService customerService;
 
+    private ObjectMapper objectMapper;
+
     /**
      * Lists of samples customers and teas
      */
@@ -77,6 +79,7 @@ public class CustomerControllerTest {
     @Before
     public void setup() throws Exception {
         mockMvc = standaloneSetup(this.customerController).build();// Standalone context
+        objectMapper = new ObjectMapper();
         Long id0 = new Long(57);
         Customer customer0 = new Customer("Alexander", "Velky");
         customer0.setId(id0);
@@ -116,13 +119,13 @@ public class CustomerControllerTest {
         when(customerService.getAllCustomers()).thenReturn(customers);
 
         mockMvc.perform(get("/customer/v1/").contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                //.andExpect(jsonPath("$[0].id", is(57)))
-                .andExpect(jsonPath("$[0].firstName", is("Alexander")))
-                .andExpect(jsonPath("$[0].lastName", is("Velky")))
-                //.andExpect(jsonPath("$[1].id", is(31)))
-                .andExpect(jsonPath("$[1].firstName", is("Charles")))
-                .andExpect(jsonPath("$[1].lastName", is("the 4th")));
+            .andExpect(status().isOk())
+            //.andExpect(jsonPath("$[0].id", is(57)))
+            .andExpect(jsonPath("$[0].firstName", is("Alexander")))
+            .andExpect(jsonPath("$[0].lastName", is("Velky")))
+            //.andExpect(jsonPath("$[1].id", is(31)))
+            .andExpect(jsonPath("$[1].firstName", is("Charles")))
+            .andExpect(jsonPath("$[1].lastName", is("the 4th")));
         verify(customerService, times(1)).getAllCustomers();
     }
 
@@ -132,15 +135,15 @@ public class CustomerControllerTest {
         when(customerService.getCustomersFavouriteTeasByCustomerId(any(Long.class))).thenReturn(teas);
 
         mockMvc.perform(get("/customer/v1/getFavouriteTeas/5").contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                //.andExpect(jsonPath("$[0].id", is(57)))
-                .andExpect(jsonPath("$[0].name", is("Bancha")))
-                .andExpect(jsonPath("$[0].typeOfTea", is("green tea")))
-                .andExpect(jsonPath("$[0].countryOfOrigin", is("Japan")))
-                //.andExpect(jsonPath("$[1].id", is(31)))
-                .andExpect(jsonPath("$[1].name", is("Pai Mu Tan")))
-                .andExpect(jsonPath("$[1].typeOfTea", is("white tea")))
-                .andExpect(jsonPath("$[1].countryOfOrigin", is("China")));
+            .andExpect(status().isOk())
+            //.andExpect(jsonPath("$[0].id", is(57)))
+            .andExpect(jsonPath("$[0].name", is("Bancha")))
+            .andExpect(jsonPath("$[0].typeOfTea", is("green tea")))
+            .andExpect(jsonPath("$[0].countryOfOrigin", is("Japan")))
+            //.andExpect(jsonPath("$[1].id", is(31)))
+            .andExpect(jsonPath("$[1].name", is("Pai Mu Tan")))
+            .andExpect(jsonPath("$[1].typeOfTea", is("white tea")))
+            .andExpect(jsonPath("$[1].countryOfOrigin", is("China")));
         verify(customerService, times(1)).getCustomersFavouriteTeasByCustomerId(any(Long.class));
     }
 
@@ -149,10 +152,10 @@ public class CustomerControllerTest {
         when(customerService.addCustomer(any(Customer.class))).thenReturn(customers.get(0));
 
         mockMvc.perform(post("/customer/v1/")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(inputCustomer))
-                .andExpect(status().isOk())
-                .andExpect(content().string(targetOutputCustomer));
+            .contentType(MediaType.APPLICATION_JSON_UTF8)
+            .content(inputCustomer))
+            .andExpect(status().isOk())
+            .andExpect(content().string(targetOutputCustomer));
         verify(customerService, times(1)).addCustomer(any(Customer.class));
     }
 
@@ -162,11 +165,11 @@ public class CustomerControllerTest {
         when(customerService.getCustomerById(any(Long.class))).thenReturn(customers.get(0));
 
         mockMvc.perform(get("/customer/v1/1")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                //.andExpect(jsonPath("id", is(57)))
-                .andExpect(jsonPath("firstName", is("Alexander")))
-                .andExpect(jsonPath("lastName", is("Velky")));
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            //.andExpect(jsonPath("id", is(57)))
+            .andExpect(jsonPath("firstName", is("Alexander")))
+            .andExpect(jsonPath("lastName", is("Velky")));
         verify(customerService, times(1)).getCustomerById(any(Long.class));
     }
 
@@ -176,24 +179,29 @@ public class CustomerControllerTest {
         when(customerService.deleteCustomerById(any(Long.class))).thenReturn(customers.get(0));
 
         mockMvc.perform(delete("/customer/v1/1").contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                //.andExpect(jsonPath("id", is(57)))
-                .andExpect(jsonPath("firstName", is("Alexander")))
-                .andExpect(jsonPath("lastName", is("Velky")));
+            .andExpect(status().isOk())
+            //.andExpect(jsonPath("id", is(57)))
+            .andExpect(jsonPath("firstName", is("Alexander")))
+            .andExpect(jsonPath("lastName", is("Velky")));
     }
 
     @Test
     public void testUpdateCustomer() throws Exception {
+        Customer tmpCustomer = customers.get(0);
+        tmpCustomer.setFirstName("ALEXANDER");
+        String inputString = objectMapper.writeValueAsString(tmpCustomer);
         // Mocking service
         when(customerService.updateCustomer(any(Customer.class))).thenReturn(customers.get(0));
 
         mockMvc.perform(MockMvcRequestBuilders.put("/customer/v1/")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(inputCustomer))
-                .andExpect(status().isOk())
-                //.andExpect(jsonPath("id", is(57)))
-                .andExpect(jsonPath("firstName", is("Alexander")))
-                .andExpect(jsonPath("lastName", is("Velky")));
+            .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
+            //.content(inputCustomer))
+            .content(inputString))
+            //.andDo(print())
+            .andExpect(status().isOk())
+            //.andExpect(jsonPath("id", is(57)))
+            .andExpect(jsonPath("firstName", is("ALEXANDER")))
+            .andExpect(jsonPath("lastName", is("Velky")));
         verify(customerService, times(1)).updateCustomer(any(Customer.class));
     }
 
@@ -202,21 +210,32 @@ public class CustomerControllerTest {
         when(customerService.addCustomersTea(any(Long.class), any(Long.class))).thenReturn(teas.get(0));
 
         mockMvc.perform(post("/customer/v1/addCustomersTeaById/1/1")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().string(targetOutputTea));
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().string(targetOutputTea));
         verify(customerService, times(1)).addCustomersTea(any(Long.class), any(Long.class));
     }
 
     @Test
-    public void deleteCustomersTeaById() throws Exception {
+    public void testDeleteCustomersTeaById() throws Exception {
         when(customerService.deleteCustomersTeaById(any(Long.class), any(Long.class))).thenReturn(teas.get(0));
 
         mockMvc.perform(delete("/customer/v1/deleteCustomersTeaById/1/1")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().string(targetOutputTea));
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().string(targetOutputTea));
         verify(customerService, times(1)).deleteCustomersTeaById(any(Long.class), any(Long.class));
+    }
+
+    @Test
+    public void testGetAllCustomersAsJsonAsString() throws Exception {
+        when(customerService.getAllCustomers()).thenReturn(customers);
+
+        mockMvc.perform(get("/customer/v1/getAllCustomersAsJson/")
+            .contentType(MediaType.APPLICATION_JSON))
+            //.andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[0]", is(objectMapper.writeValueAsString(customers.get(0)))));
     }
 
 }

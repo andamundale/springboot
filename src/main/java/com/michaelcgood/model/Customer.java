@@ -2,6 +2,9 @@ package com.michaelcgood.model;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.michaelcgood.model.dto.CustomerDto;
 import lombok.Data;
 import lombok.Getter;
@@ -15,9 +18,10 @@ import java.util.List;
 @Table(name = "Customer")
 @Data
 @NoArgsConstructor
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class Customer {
-
-//    TODO A: code looks messy, check style below or move @Getter @Setter to classlevel
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
@@ -26,16 +30,12 @@ public class Customer {
     private String firstName;
     private String lastName;
 
+    //@JsonBackReference
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "favourite_tea",
             joinColumns = @JoinColumn(name = "tea_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "customer_id", referencedColumnName = "id"))
     private List<Tea> favouriteTeas;  // zakaznikove oblubene caje
-
-//    TODO not necessary constructor - check lombock @NoArgsConstructor
-////      it seems that mapper wants empty constructor before lombok generates one
-//    protected Customer() {}
-
 
     public Customer(String firstName, String lastName) {
         this.id = new Long(0);

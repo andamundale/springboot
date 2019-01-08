@@ -1,5 +1,6 @@
 package com.michaelcgood.app.controller.integration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.michaelcgood.model.Customer;
 import com.michaelcgood.model.Tea;
@@ -61,18 +62,25 @@ public class TeaControllerIntegrationTest {
     @Autowired
     private TeaRepository teaRepository;
 
+    private ObjectMapper objectMapper;
+
     private String inputCustomer, updateCustomer, inputTea, inputTea2, updateTea, targetOutputTea;
 
     private Long firstId, customerId, teaId;
 
     private Tea favTea;
 
+    private List<Tea> teas;
+
     @Before
     public void setup() throws Exception {
-        Customer customer0;
-        List<Tea> teas;
-        List<Customer> customers;
+        Customer customer0 = new Customer("Charles", "the 4th");
+        List<Tea> tmpTeas = new ArrayList<Tea>();
+        List<Customer> customers = new ArrayList<Customer>();
+        teas = new ArrayList<Tea>();
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+        objectMapper = new ObjectMapper();
+
         inputCustomer = "{\"id\":12,\"firstName\":\"Alexander\",\"lastName\":\"Velky\"}";
         updateCustomer = "{\"id\":12,\"firstName\":\"Alexander\",\"lastName\":\"Macedonsky\"}";
         inputTea = "{\"id\":12,\"name\":\"Genmaicha\",\"typeOfTea\":\"green tea\"," +
@@ -95,20 +103,18 @@ public class TeaControllerIntegrationTest {
         customerRepository.save(new Customer("Kim", "Bauer"));
         customerRepository.save(new Customer("David", "Palmer"));
         customerRepository.save(new Customer("Michelle", "Dessler"));
-        teaId = teaRepository.save(new Tea("Sencha", "green tea", "Japan")).getId();
-        teaRepository.save(new Tea("Bancha", "green tea", "Japan"));
+        teas.add(teaRepository.save(new Tea("Sencha", "green tea", "Japan")));
+        teaId = teas.get(teas.size()-1).getId();
+        teas.add(teaRepository.save(new Tea("Bancha", "green tea", "Japan")));
         favTea = teaRepository.save(new Tea("Baihao Yinzhen", "white tea", "China"));
-        teaRepository.save(new Tea("Keemun", "black tea", "China"));
-        customer0 = new Customer("Charles", "the 4th");
-        teas = new ArrayList<Tea>();
-        teas.add(favTea);
-        customer0.setFavouriteTeas(teas);
+        teas.add(teaRepository.save(new Tea("Keemun", "black tea", "China")));
+        tmpTeas.add(favTea);
+        customer0.setFavouriteTeas(tmpTeas);
         customerId = customerRepository.save(customer0).getId();
         customer0.setId(customerId);
-        customers = new ArrayList<Customer>();
         customers.add(customer0);
         favTea.setCustomers(customers);
-        teaRepository.save(favTea);
+        teas.add(teaRepository.save(favTea));
         /**/
         inputTea2 = "{\"id\":\""+(customerId+1)+"\",\"name\":\"Pai Mu Tan\",\"typeOfTea\":\"white tea\",\"countryOfOrigin\":\"China\"}";
         updateTea = "{\"id\":\""+teaId+"\",\"name\":\"Genmaicha\",\"typeOfTea\":\"green tea\"," +
@@ -227,5 +233,18 @@ public class TeaControllerIntegrationTest {
                 //.andExpect(jsonPath("$[0].lastName", is("the 4th")));
                 .andExpect(jsonPath("$[0].firstName", is("Charles")))
                 .andExpect(jsonPath("$[0].lastName", is("the 4th")));
+    }
+
+    @Test
+    public void testGetAllCustomersAsJsonAsString() throws Exception {
+        mockMvc.perform(get("/tea/v1/getAllTeasAsJson/"))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$", hasSize(4))) //defaultne 6 ale zalezi od poradia testov
+                //.andExpect(jsonPath("$[0].id", is(1)))
+                .andExpect(jsonPath("$[0]", is(objectMapper.writeValueAsString(teas.get(1)))))
+                //.andExpect(jsonPath("$[1].id", is(2)))
+                .andExpect(jsonPath("$[1]", is(objectMapper.writeValueAsString(teas.get(0)))));
     }
 }
